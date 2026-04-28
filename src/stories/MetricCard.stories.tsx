@@ -9,7 +9,7 @@ const meta: Meta<typeof MetricCard> = {
     docs: {
       description: {
         component:
-          'KPI metric card with title, currency, number, and a comparison indicator. Used in horizontal scroll for dashboard summaries.',
+          'KPI metric card with title, currency, number, and a comparison indicator.',
       },
     },
   },
@@ -26,7 +26,6 @@ const meta: Meta<typeof MetricCard> = {
 export default meta;
 type Story = StoryObj<typeof MetricCard>;
 
-// --- Ticket médio ---
 export const TicketMedio: Story = {
   name: 'Ticket médio',
   args: {
@@ -35,58 +34,6 @@ export const TicketMedio: Story = {
     number: '38,90',
     percentage: '20%',
     description: 'mês a mês',
-    width: 199,
-  },
-};
-
-// --- Lucro no mês ---
-export const LucroMes: Story = {
-  name: 'Lucro no mês',
-  args: {
-    title: 'Lucro no mês',
-    currency: 'R$',
-    number: '5.304',
-    percentage: '18%',
-    description: 'de margem',
-    width: 199,
-  },
-};
-
-// --- Vendas totais ---
-export const VendasTotais: Story = {
-  name: 'Vendas totais',
-  args: {
-    title: 'Vendas este mês',
-    currency: 'R$',
-    number: '12.534',
-    percentage: '33%',
-    description: 'mês a mês',
-    width: 199,
-  },
-};
-
-// --- Full width ---
-export const FullWidth: Story = {
-  name: 'Full width (361px)',
-  args: {
-    title: 'Faturamento total',
-    currency: 'R$',
-    number: '89.200',
-    percentage: '12%',
-    description: 'vs ano anterior',
-    width: 361,
-  },
-};
-
-// --- USD currency ---
-export const USDCurrency: Story = {
-  name: 'USD currency',
-  args: {
-    title: 'Revenue',
-    currency: '$',
-    number: '24.890',
-    percentage: '8%',
-    description: 'month over month',
     width: 199,
   },
 };
