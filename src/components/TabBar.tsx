@@ -36,14 +36,14 @@ export function TabBar({ tabs, activeTab, onTabChange }: TabBarProps) {
       Animated.spring(indicatorX, {
         toValue: tabOffsets[activeIndex] ?? 0,
         useNativeDriver: false,
-        tension: 120,
-        friction: 14,
+        tension: 60,
+        friction: 20,
       }),
       Animated.spring(indicatorWidth, {
         toValue: tabWidths[activeIndex] ?? 0,
         useNativeDriver: false,
-        tension: 120,
-        friction: 14,
+        tension: 60,
+        friction: 20,
       }),
     ]).start();
   }, [activeIndex, tabWidths, tabOffsets]);

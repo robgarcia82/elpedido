@@ -71,7 +71,7 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
         width: indicator.width,
         opacity: indicator.ready ? 1 : 0,
         transition: indicator.ready
-          ? 'left 0.35s cubic-bezier(0.34,1.56,0.64,1), width 0.35s cubic-bezier(0.34,1.56,0.64,1)'
+          ? 'left 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1)'
           : 'none',
       }} />
     </div>
