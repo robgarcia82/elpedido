@@ -2,9 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, ImageBackground } from 'react-native';
 import { colors, spacing, radius, textStyles } from '../theme/tokens';
 
-// Decorative gradient asset (replace with local asset for production)
-const DECORATION_BG = require('../assets/balance-card-bg.png'); // placeholder
-
 interface BalanceCardProps {
   title?: string;
   value?: string;
