@@ -118,18 +118,20 @@ export function BalanceCard({
       const tick = () => {
         const elapsed  = Date.now() - countStart;
         const progress = Math.min(elapsed / COUNT_DURATION, 1);
-        // Two-phase easing: fast rush (0-70%) then crawl to final value (70-100%)
-        // Phase 1: 0→70% time covers 0→95% of value
-        // Phase 2: 70→100% time crawls through last 5% — very visible slowdown
+        // Two-phase easing: fast rush to ~7.000, then crawl to final value
+        // Phase 1: 0→60% time covers 0→78% of value (~7.000 of 8.982)
+        // Phase 2: 60→100% time crawls 78%→100% (~7.000 → 8.982)
+        const CRAWL_START = 0.78; // ~7.000 / 8.982
+        const PHASE_SPLIT = 0.60; // 60% of duration spent in fast phase
         let eased: number;
-        if (progress < 0.7) {
-          // Ease-out quad mapped to 0→0.95
-          const t = progress / 0.7;
-          eased = 0.95 * (1 - (1 - t) * (1 - t));
+        if (progress < PHASE_SPLIT) {
+          // Ease-out quad: fast at start, decelerates approaching 7.000
+          const t = progress / PHASE_SPLIT;
+          eased = CRAWL_START * (1 - (1 - t) * (1 - t));
         } else {
-          // Linear crawl from 0.95 to 1.0 over the remaining 30%
-          const t = (progress - 0.7) / 0.3;
-          eased = 0.95 + 0.05 * t;
+          // Slow linear crawl: 7.000 → 8.982 over 40% of duration
+          const t = (progress - PHASE_SPLIT) / (1 - PHASE_SPLIT);
+          eased = CRAWL_START + (1 - CRAWL_START) * t;
         }
         setDisplayValue(prefix + formatNum(eased * numeric, separator, decimals));
         if (progress < 1) {
