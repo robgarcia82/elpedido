@@ -11,7 +11,7 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
 }) {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const rowRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
+  const [indicator, setIndicator] = useState({ x: 0, width: 0, ready: false });
 
   const measure = useCallback(() => {
     const activeIndex = tabs.findIndex(t => t.value === activeTab);
@@ -21,21 +21,34 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
     const rowRect = row.getBoundingClientRect();
     const elRect = el.getBoundingClientRect();
     setIndicator({
-      left: elRect.left - rowRect.left,
+      x: elRect.left - rowRect.left,
       width: elRect.width,
       ready: true,
     });
   }, [activeTab, tabs]);
 
-  // Run after paint so layout is complete
   useLayoutEffect(() => {
     const id = requestAnimationFrame(measure);
     return () => cancelAnimationFrame(id);
   }, [measure]);
 
   return (
-    <div style={{ width: '100%', borderBottom: `1px solid ${colors['neutral/border']}`, position: 'relative', fontFamily: 'Geist, system-ui, sans-serif' }}>
-      <div ref={rowRef} style={{ display: 'flex', gap: spacing[24], paddingTop: spacing[12], paddingLeft: spacing[16], paddingRight: spacing[16] }}>
+    <div style={{
+      width: '100%',
+      borderBottom: `1px solid ${colors['neutral/border']}`,
+      position: 'relative',
+      fontFamily: 'Geist, system-ui, sans-serif',
+    }}>
+      <div
+        ref={rowRef}
+        style={{
+          display: 'flex',
+          gap: spacing[24],
+          paddingTop: spacing[12],
+          paddingLeft: spacing[16],
+          paddingRight: spacing[16],
+        }}
+      >
         {tabs.map((tab, i) => {
           const isActive = tab.value === activeTab;
           return (
@@ -44,7 +57,9 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
               ref={el => { tabRefs.current[i] = el; }}
               onClick={() => onTabChange(tab.value)}
               style={{
-                background: 'none', border: 'none', cursor: 'pointer',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
                 padding: `0 0 ${spacing[12]}px`,
                 fontSize: textStyles['Body/Label'].fontSize,
                 fontWeight: textStyles['Body/Label'].fontWeight,
@@ -60,20 +75,23 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
         })}
       </div>
 
-      {/* Sliding indicator */}
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        height: 2,
-        backgroundColor: colors['brand/accent'],
-        borderRadius: 1,
-        left: indicator.left,
-        width: indicator.width,
-        opacity: indicator.ready ? 1 : 0,
-        transition: indicator.ready
-          ? 'left 0.35s cubic-bezier(0.16, 1, 0.3, 1), width 0.35s cubic-bezier(0.16, 1, 0.3, 1)'
-          : 'none',
-      }} />
+      {/* Sliding indicator — uses transform for reliable GPU-animated transitions */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          height: 2,
+          backgroundColor: colors['brand/accent'],
+          borderRadius: 1,
+          width: indicator.width,
+          opacity: indicator.ready ? 1 : 0,
+          transform: `translateX(${indicator.x}px)`,
+          transition: indicator.ready
+            ? 'transform 0.3s ease-out, width 0.3s ease-out'
+            : 'none',
+        }}
+      />
     </div>
   );
 }
@@ -84,7 +102,7 @@ const meta: Meta = {
     backgrounds: { default: 'dark' },
     docs: {
       description: {
-        component: 'Horizontal tab navigation with animated spring indicator. Blue bar slides to the active tab.',
+        component: 'Horizontal tab navigation with animated sliding indicator.',
       },
     },
   },
