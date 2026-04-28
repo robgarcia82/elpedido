@@ -1,9 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { colors, spacing, textStyles } from '../theme/tokens';
 
-// Web-native TabBar with CSS transition for Storybook preview
-// (The React Native version uses Animated.spring in production)
 interface TabItem { label: string; value: string; }
 
 function TabBarWeb({ tabs, activeTab, onTabChange }: {
@@ -11,54 +9,42 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
   activeTab: string;
   onTabChange: (v: string) => void;
 }) {
-  const [tabRects, setTabRects] = useState<{ width: number; left: number }[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const activeIndex = tabs.findIndex((t) => t.value === activeTab);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const [indicator, setIndicator] = useState({ left: 0, width: 0, ready: false });
 
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const items = containerRef.current.querySelectorAll('[data-tab]');
-    const containerLeft = containerRef.current.getBoundingClientRect().left;
-    const rects = Array.from(items).map((el) => {
-      const r = el.getBoundingClientRect();
-      return { width: r.width, left: r.left - containerLeft };
+  const measure = useCallback(() => {
+    const activeIndex = tabs.findIndex(t => t.value === activeTab);
+    const el = tabRefs.current[activeIndex];
+    const row = rowRef.current;
+    if (!el || !row) return;
+    const rowRect = row.getBoundingClientRect();
+    const elRect = el.getBoundingClientRect();
+    setIndicator({
+      left: elRect.left - rowRect.left,
+      width: elRect.width,
+      ready: true,
     });
-    setTabRects(rects);
-  }, [tabs]);
+  }, [activeTab, tabs]);
 
-  const indicatorLeft = tabRects[activeIndex]?.left ?? 0;
-  const indicatorWidth = tabRects[activeIndex]?.width ?? 0;
+  // Run after paint so layout is complete
+  useLayoutEffect(() => {
+    const id = requestAnimationFrame(measure);
+    return () => cancelAnimationFrame(id);
+  }, [measure]);
 
   return (
-    <div
-      style={{
-        width: '100%',
-        borderBottom: `1px solid ${colors['neutral/border']}`,
-        position: 'relative',
-        fontFamily: 'Geist, system-ui, sans-serif',
-      }}
-    >
-      <div
-        ref={containerRef}
-        style={{
-          display: 'flex',
-          gap: spacing[24],
-          paddingTop: spacing[12],
-          paddingLeft: spacing[16],
-          paddingRight: spacing[16],
-        }}
-      >
-        {tabs.map((tab) => {
+    <div style={{ width: '100%', borderBottom: `1px solid ${colors['neutral/border']}`, position: 'relative', fontFamily: 'Geist, system-ui, sans-serif' }}>
+      <div ref={rowRef} style={{ display: 'flex', gap: spacing[24], paddingTop: spacing[12], paddingLeft: spacing[16], paddingRight: spacing[16] }}>
+        {tabs.map((tab, i) => {
           const isActive = tab.value === activeTab;
           return (
             <button
               key={tab.value}
-              data-tab={tab.value}
+              ref={el => { tabRefs.current[i] = el; }}
               onClick={() => onTabChange(tab.value)}
               style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
+                background: 'none', border: 'none', cursor: 'pointer',
                 padding: `0 0 ${spacing[12]}px`,
                 fontSize: textStyles['Body/Label'].fontSize,
                 fontWeight: textStyles['Body/Label'].fontWeight,
@@ -74,19 +60,20 @@ function TabBarWeb({ tabs, activeTab, onTabChange }: {
         })}
       </div>
 
-      {/* Animated sliding indicator */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          height: 2,
-          backgroundColor: colors['brand/accent'],
-          borderRadius: 1,
-          width: indicatorWidth,
-          transform: `translateX(${indicatorLeft}px)`,
-          transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-        }}
-      />
+      {/* Sliding indicator */}
+      <div style={{
+        position: 'absolute',
+        bottom: 0,
+        height: 2,
+        backgroundColor: colors['brand/accent'],
+        borderRadius: 1,
+        left: indicator.left,
+        width: indicator.width,
+        opacity: indicator.ready ? 1 : 0,
+        transition: indicator.ready
+          ? 'left 0.35s cubic-bezier(0.34,1.56,0.64,1), width 0.35s cubic-bezier(0.34,1.56,0.64,1)'
+          : 'none',
+      }} />
     </div>
   );
 }
@@ -97,13 +84,11 @@ const meta: Meta = {
     backgrounds: { default: 'dark' },
     docs: {
       description: {
-        component:
-          'Horizontal tab navigation with an animated sliding indicator. The blue bar springs to the active tab. In React Native, uses `Animated.spring` with tension:120 / friction:14.',
+        component: 'Horizontal tab navigation with animated spring indicator. Blue bar slides to the active tab.',
       },
     },
   },
 };
-
 export default meta;
 
 const SALES_TABS = [
@@ -127,7 +112,7 @@ export const Interactive: StoryObj = {
     return (
       <div style={{ width: 393 }}>
         <TabBarWeb tabs={SALES_TABS} activeTab={active} onTabChange={setActive} />
-        <div style={{ padding: 16, color: '#666', fontSize: 12, fontFamily: 'monospace' }}>
+        <div style={{ padding: 16, color: '#555', fontSize: 12, fontFamily: 'monospace' }}>
           active: <span style={{ color: colors['brand/accent'] }}>{active}</span>
         </div>
       </div>
@@ -154,10 +139,7 @@ export const TwoTabs: StoryObj = {
     return (
       <div style={{ width: 393 }}>
         <TabBarWeb
-          tabs={[
-            { label: 'Resumo', value: 'resumo' },
-            { label: 'Detalhes', value: 'detalhes' },
-          ]}
+          tabs={[{ label: 'Resumo', value: 'resumo' }, { label: 'Detalhes', value: 'detalhes' }]}
           activeTab={active}
           onTabChange={setActive}
         />
