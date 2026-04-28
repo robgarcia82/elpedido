@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     left: spacing[16],
     top: spacing[16],
     width: 203,
-    height: 187,
+    height: 175, // 215 (card) - 16 (top) - 24 (bottom) = 175
     justifyContent: 'space-between',
     overflow: 'hidden',
   },
