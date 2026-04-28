@@ -11,3 +11,6 @@ export { default as HomeScreen } from './screens/HomeScreen';
 
 // Theme
 export * from './theme/tokens';
+
+export { Icon } from './components/Icon';
+export type { IconType } from './components/Icon';
