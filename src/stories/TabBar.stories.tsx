@@ -1,103 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import React, { useRef, useState, useLayoutEffect, useCallback } from 'react';
-import { colors, spacing, textStyles } from '../theme/tokens';
+import React, { useState } from 'react';
+import { TabBar } from '../components/TabBar';
 
-interface TabItem { label: string; value: string; }
-
-function TabBarWeb({ tabs, activeTab, onTabChange }: {
-  tabs: TabItem[];
-  activeTab: string;
-  onTabChange: (v: string) => void;
-}) {
-  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const rowRef = useRef<HTMLDivElement>(null);
-  const [indicator, setIndicator] = useState({ x: 0, width: 0, ready: false });
-
-  const measure = useCallback(() => {
-    const activeIndex = tabs.findIndex(t => t.value === activeTab);
-    const el = tabRefs.current[activeIndex];
-    const row = rowRef.current;
-    if (!el || !row) return;
-    const rowRect = row.getBoundingClientRect();
-    const elRect = el.getBoundingClientRect();
-    setIndicator({
-      x: elRect.left - rowRect.left,
-      width: elRect.width,
-      ready: true,
-    });
-  }, [activeTab, tabs]);
-
-  useLayoutEffect(() => {
-    const id = requestAnimationFrame(measure);
-    return () => cancelAnimationFrame(id);
-  }, [measure]);
-
-  return (
-    <div style={{
-      width: '100%',
-      borderBottom: `1px solid ${colors['neutral/border']}`,
-      position: 'relative',
-      fontFamily: 'Geist, system-ui, sans-serif',
-    }}>
-      <div
-        ref={rowRef}
-        style={{
-          display: 'flex',
-          gap: spacing[24],
-          paddingTop: spacing[12],
-          paddingLeft: spacing[16],
-          paddingRight: spacing[16],
-        }}
-      >
-        {tabs.map((tab, i) => {
-          const isActive = tab.value === activeTab;
-          return (
-            <button
-              key={tab.value}
-              ref={el => { tabRefs.current[i] = el; }}
-              onClick={() => onTabChange(tab.value)}
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                padding: `0 0 ${spacing[12]}px`,
-                fontSize: textStyles['Body/Label'].fontSize,
-                fontWeight: textStyles['Body/Label'].fontWeight,
-                color: isActive ? colors['surface/on-dark'] : colors['neutral/text-tertiary'],
-                fontFamily: 'inherit',
-                transition: 'color 0.2s ease',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Sliding indicator — uses transform for reliable GPU-animated transitions */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          height: 2,
-          backgroundColor: colors['brand/accent'],
-          borderRadius: 1,
-          width: indicator.width,
-          opacity: indicator.ready ? 1 : 0,
-          transform: `translateX(${indicator.x}px)`,
-          transition: indicator.ready
-            ? 'transform 0.3s ease-out, width 0.3s ease-out'
-            : 'none',
-        }}
-      />
-    </div>
-  );
-}
-
-const meta: Meta = {
+const meta: Meta<typeof TabBar> = {
   title: 'Components/TabBar',
+  component: TabBar,
+  tags: ['autodocs'],
   parameters: {
     backgrounds: { default: 'dark' },
     docs: {
@@ -107,6 +15,7 @@ const meta: Meta = {
     },
   },
 };
+
 export default meta;
 
 const SALES_TABS = [
@@ -127,14 +36,7 @@ export const Interactive: StoryObj = {
   name: 'Interactive — animated indicator',
   render: () => {
     const [active, setActive] = useState('vendas');
-    return (
-      <div style={{ width: 393 }}>
-        <TabBarWeb tabs={SALES_TABS} activeTab={active} onTabChange={setActive} />
-        <div style={{ padding: 16, color: '#555', fontSize: 12, fontFamily: 'monospace' }}>
-          active: <span style={{ color: colors['brand/accent'] }}>{active}</span>
-        </div>
-      </div>
-    );
+    return <TabBar tabs={SALES_TABS} activeTab={active} onTabChange={setActive} />;
   },
 };
 
@@ -142,11 +44,7 @@ export const PeriodTabs: StoryObj = {
   name: 'Period tabs',
   render: () => {
     const [active, setActive] = useState('month');
-    return (
-      <div style={{ width: 393 }}>
-        <TabBarWeb tabs={PERIOD_TABS} activeTab={active} onTabChange={setActive} />
-      </div>
-    );
+    return <TabBar tabs={PERIOD_TABS} activeTab={active} onTabChange={setActive} />;
   },
 };
 
@@ -155,13 +53,11 @@ export const TwoTabs: StoryObj = {
   render: () => {
     const [active, setActive] = useState('resumo');
     return (
-      <div style={{ width: 393 }}>
-        <TabBarWeb
-          tabs={[{ label: 'Resumo', value: 'resumo' }, { label: 'Detalhes', value: 'detalhes' }]}
-          activeTab={active}
-          onTabChange={setActive}
-        />
-      </div>
+      <TabBar
+        tabs={[{ label: 'Resumo', value: 'resumo' }, { label: 'Detalhes', value: 'detalhes' }]}
+        activeTab={active}
+        onTabChange={setActive}
+      />
     );
   },
 };
