@@ -118,8 +118,19 @@ export function BalanceCard({
       const tick = () => {
         const elapsed  = Date.now() - countStart;
         const progress = Math.min(elapsed / COUNT_DURATION, 1);
-        // ease-out expo: rockets from 0, dramatically slows near the end
-        const eased    = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        // Two-phase easing: fast rush (0-70%) then crawl to final value (70-100%)
+        // Phase 1: 0→70% time covers 0→95% of value
+        // Phase 2: 70→100% time crawls through last 5% — very visible slowdown
+        let eased: number;
+        if (progress < 0.7) {
+          // Ease-out quad mapped to 0→0.95
+          const t = progress / 0.7;
+          eased = 0.95 * (1 - (1 - t) * (1 - t));
+        } else {
+          // Linear crawl from 0.95 to 1.0 over the remaining 30%
+          const t = (progress - 0.7) / 0.3;
+          eased = 0.95 + 0.05 * t;
+        }
         setDisplayValue(prefix + formatNum(eased * numeric, separator, decimals));
         if (progress < 1) {
           rafRef.current = requestAnimationFrame(tick);
