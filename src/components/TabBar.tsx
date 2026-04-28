@@ -81,18 +81,18 @@ export function TabBar({ tabs, activeTab, onTabChange }: TabBarProps) {
             </TouchableOpacity>
           );
         })}
-      </View>
 
-      {/* Animated sliding indicator */}
-      <Animated.View
-        style={[
-          styles.indicator,
-          {
-            width: indicatorWidth,
-            transform: [{ translateX: indicatorX }],
-          },
-        ]}
-      />
+        {/* Indicator inside content so onLayout x offsets align exactly */}
+        <Animated.View
+          style={[
+            styles.indicator,
+            {
+              width: indicatorWidth,
+              transform: [{ translateX: indicatorX }],
+            },
+          ]}
+        />
+      </View>
     </View>
   );
 }
