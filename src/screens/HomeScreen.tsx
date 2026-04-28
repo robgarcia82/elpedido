@@ -3,7 +3,6 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  Platform,
 } from 'react-native';
 import { colors, spacing } from '../theme/tokens';
 import { BalanceCard } from '../components/BalanceCard';
@@ -76,7 +75,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <View style={[styles.bottomNav, { paddingBottom: Platform.OS === 'ios' ? 20 : 0 }]}>
+      <View style={[styles.bottomNav, { paddingBottom: 0 }]}>
         <BottomNavBar activeTab={activeNav} onTabChange={setActiveNav} />
       </View>
     </View>
@@ -89,7 +88,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors['system/background'],
   },
   statusBarSpace: {
-    height: Platform.OS === 'ios' ? 50 : 30,
+    height: 44,
   },
   scrollView: {
     flex: 1,
