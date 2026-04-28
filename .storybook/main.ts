@@ -13,26 +13,6 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  viteFinal: async (config) => {
-    config.resolve = config.resolve || {};
-    config.resolve.alias = {
-      ...(config.resolve.alias as object || {}),
-      'react-native': 'react-native-web',
-    };
-
-    // Strip "use client" directives that break Vite bundling
-    config.plugins = config.plugins || [];
-    config.plugins.push({
-      name: 'strip-use-client',
-      transform(code: string, id: string) {
-        if (id.includes('node_modules') && code.includes('"use client"')) {
-          return code.replace(/"use client";\s*/g, '');
-        }
-      },
-    });
-
-    return config;
-  },
 };
 
 export default config;
