@@ -118,22 +118,8 @@ export function BalanceCard({
       const tick = () => {
         const elapsed  = Date.now() - countStart;
         const progress = Math.min(elapsed / COUNT_DURATION, 1);
-        // Two-phase easing:
-        // Phase 1 (0→40% time): rocket through 0→90% of value
-        // Phase 2 (40→100% time): very slow ease-in crawl through last 10%
-        //   t^4 within phase: stays slow the whole time, clearly visible
-        const PHASE_SPLIT  = 0.40; // 40% of 1400ms = 560ms for fast phase
-        const PHASE_TARGET = 0.90; // reach 90% of value in fast phase
-        let eased: number;
-        if (progress < PHASE_SPLIT) {
-          // ease-out quad: fast rush to 90%
-          const t = progress / PHASE_SPLIT;
-          eased = PHASE_TARGET * (1 - (1 - t) * (1 - t));
-        } else {
-          // ease-in quart: agonizingly slow crawl through last 10%
-          const t = (progress - PHASE_SPLIT) / (1 - PHASE_SPLIT);
-          eased = PHASE_TARGET + (1 - PHASE_TARGET) * (t * t * t * t);
-        }
+        // ease-out expo: fast start, dramatically slows near the end
+        const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
         setDisplayValue(prefix + formatNum(eased * numeric, separator, decimals));
         if (progress < 1) {
           rafRef.current = requestAnimationFrame(tick);
