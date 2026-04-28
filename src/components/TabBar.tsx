@@ -1,11 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Animated,
-  LayoutChangeEvent,
 } from 'react-native';
 import { colors, spacing, textStyles } from '../theme/tokens';
 
@@ -21,58 +20,61 @@ interface TabBarProps {
 }
 
 export function TabBar({ tabs, activeTab, onTabChange }: TabBarProps) {
-  const [tabWidths, setTabWidths] = useState<number[]>([]);
-  const [tabOffsets, setTabOffsets] = useState<number[]>([]);
-  const indicatorX = useRef(new Animated.Value(0)).current;
-  const indicatorWidth = useRef(new Animated.Value(0)).current;
+  const containerRef = useRef<View>(null);
+  const tabRefs      = useRef<(View | null)[]>([]);
+  const indicatorX   = useRef(new Animated.Value(0)).current;
+  const indicatorW   = useRef(new Animated.Value(0)).current;
+  const [ready, setReady] = useState(false);
 
-  const activeIndex = tabs.findIndex((t) => t.value === activeTab);
+  const activeIndex = tabs.findIndex(t => t.value === activeTab);
 
-  // Animate indicator whenever active tab or layout changes
+  const measureTab = useCallback(() => {
+    const tabRef = tabRefs.current[activeIndex];
+    if (!tabRef || !containerRef.current) return;
+
+    tabRef.measureLayout(
+      containerRef.current as any,
+      (x, _y, width) => {
+        Animated.parallel([
+          Animated.spring(indicatorX, {
+            toValue: x,
+            useNativeDriver: false,
+            tension: 60,
+            friction: 20,
+          }),
+          Animated.spring(indicatorW, {
+            toValue: width,
+            useNativeDriver: false,
+            tension: 60,
+            friction: 20,
+          }),
+        ]).start();
+        setReady(true);
+      },
+      () => {} // onFail
+    );
+  }, [activeIndex]);
+
+  // Re-measure on every tab change and after initial layout
   useEffect(() => {
-    if (tabWidths.length === 0 || activeIndex < 0) return;
-
-    Animated.parallel([
-      Animated.spring(indicatorX, {
-        toValue: tabOffsets[activeIndex] ?? 0,
-        useNativeDriver: false,
-        tension: 60,
-        friction: 20,
-      }),
-      Animated.spring(indicatorWidth, {
-        toValue: tabWidths[activeIndex] ?? 0,
-        useNativeDriver: false,
-        tension: 60,
-        friction: 20,
-      }),
-    ]).start();
-  }, [activeIndex, tabWidths, tabOffsets]);
-
-  const handleTabLayout = (index: number) => (e: LayoutChangeEvent) => {
-    const { width, x } = e.nativeEvent.layout;
-    setTabWidths((prev) => {
-      const next = [...prev];
-      next[index] = width;
-      return next;
-    });
-    setTabOffsets((prev) => {
-      const next = [...prev];
-      next[index] = x;
-      return next;
-    });
-  };
+    // Small delay lets the layout settle (needed on web)
+    const t = setTimeout(measureTab, 16);
+    return () => clearTimeout(t);
+  }, [measureTab]);
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
+      {/* Tabs row — this is the reference frame for measureLayout */}
+      <View ref={containerRef} style={styles.content}>
         {tabs.map((tab, index) => {
           const isActive = tab.value === activeTab;
           return (
             <TouchableOpacity
               key={tab.value}
+              ref={el => { tabRefs.current[index] = el; }}
               style={styles.tabItem}
               onPress={() => onTabChange(tab.value)}
-              onLayout={handleTabLayout(index)}
+              onLayout={index === activeIndex ? measureTab : undefined}
               activeOpacity={0.7}
             >
               <Text style={[styles.label, isActive && styles.labelActive]}>
@@ -82,12 +84,13 @@ export function TabBar({ tabs, activeTab, onTabChange }: TabBarProps) {
           );
         })}
 
-        {/* Indicator inside content so onLayout x offsets align exactly */}
+        {/* Indicator — same parent as tabs, so measureLayout coords align */}
         <Animated.View
           style={[
             styles.indicator,
             {
-              width: indicatorWidth,
+              opacity: ready ? 1 : 0,
+              width: indicatorW,
               transform: [{ translateX: indicatorX }],
             },
           ]}
@@ -119,7 +122,6 @@ const styles = StyleSheet.create({
   labelActive: {
     color: colors['surface/on-dark'],
   },
-  // Sliding indicator — sits at the bottom, animated via translateX + width
   indicator: {
     position: 'absolute',
     bottom: 0,
