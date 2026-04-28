@@ -13,11 +13,11 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
-  viteFinalConfig: async (config) => {
+  viteFinal: async (config) => {
     config.resolve = config.resolve || {};
     config.resolve.alias = {
-      ...(config.resolve.alias || {}),
-      // Alias React Native to React Native Web
+      ...(config.resolve.alias as object || {}),
+      // Alias React Native → React Native Web for Storybook
       'react-native': 'react-native-web',
     };
     return config;
