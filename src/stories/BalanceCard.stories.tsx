@@ -14,8 +14,8 @@ function injectStyles() {
       to   { opacity: 1; transform: translateY(0); }
     }
     @keyframes bcShimmer {
-      0%   { background-position: -400px 0; }
-      100% { background-position: 400px 0; }
+      0%   { background-position: -600px 0; }
+      100% { background-position: 600px 0; }
     }
   `;
   document.head.appendChild(s);
@@ -24,7 +24,9 @@ function injectStyles() {
 const DECORATION_GRADIENT = 'https://www.figma.com/api/mcp/asset/659d8da6-bb52-46fc-b150-75468073c084';
 const DECORATION_TEXTURE  = 'https://www.figma.com/api/mcp/asset/b2eff665-00da-4172-85c8-1fabc28268e9';
 const DECORATION_OVERLAY  = 'https://www.figma.com/api/mcp/asset/f4ad0931-61e0-4d06-8194-b96f66a0f646';
+
 const TOTAL_IMAGES = 3;
+const MIN_SKELETON_MS = 800; // always show skeleton for at least 800ms
 
 interface Props { title?: string; value?: string; sign?: string; amount?: string; }
 
@@ -34,32 +36,53 @@ function BalanceCardWeb({
   sign  = '+',
   amount = 'R$ 392',
 }: Props) {
-  const [phase, setPhase] = useState<'loading' | 'bg-in' | 'text-in'>('loading');
+  // phase: 'skeleton' → 'bg-in' → 'texts-in'
+  const [phase, setPhase] = useState<'skeleton' | 'bg-in' | 'texts-in'>('skeleton');
   const [animKey, setAnimKey] = useState(0);
-  const loadedRef = useRef(0);
+  const loadedRef  = useRef(0);
+  const startRef   = useRef(Date.now());
+  const timerRef   = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => { injectStyles(); }, []);
 
   // Reset on replay
   useEffect(() => {
-    setPhase('loading');
+    setPhase('skeleton');
     loadedRef.current = 0;
+    startRef.current = Date.now();
   }, [animKey]);
 
-  const handleLoad = () => {
+  // Advance to bg-in, respecting min skeleton time
+  const tryAdvance = () => {
     loadedRef.current += 1;
-    if (loadedRef.current >= TOTAL_IMAGES) setPhase('bg-in');
+    if (loadedRef.current < TOTAL_IMAGES) return; // wait for all images
+
+    const elapsed = Date.now() - startRef.current;
+    const wait = Math.max(0, MIN_SKELETON_MS - elapsed);
+
+    timerRef.current = setTimeout(() => setPhase('bg-in'), wait);
   };
 
-  // After bg fades in, start text animations
+  // After bg fades in → start text animations
   useEffect(() => {
     if (phase !== 'bg-in') return;
-    const t = setTimeout(() => setPhase('text-in'), 450); // wait for bg fade
+    const t = setTimeout(() => setPhase('texts-in'), 500);
     return () => clearTimeout(t);
   }, [phase]);
 
-  const bgVisible   = phase === 'bg-in' || phase === 'text-in';
-  const textsVisible = phase === 'text-in';
+  // Fallback: if images never fire onLoad (e.g. error), advance anyway
+  useEffect(() => {
+    const fallback = setTimeout(() => {
+      if (phase === 'skeleton') setPhase('bg-in');
+    }, MIN_SKELETON_MS + 2000);
+    return () => {
+      clearTimeout(fallback);
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [animKey]);
+
+  const showBg     = phase === 'bg-in' || phase === 'texts-in';
+  const showTexts  = phase === 'texts-in';
 
   return (
     <div>
@@ -74,75 +97,77 @@ function BalanceCardWeb({
           fontFamily: 'Geist, system-ui, sans-serif',
         }}
       >
-        {/* ── Skeleton placeholder ── */}
+        {/* ── Skeleton — always on top until bg is ready ── */}
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute', inset: 0, zIndex: 10,
           backgroundColor: colors['neutral/surface-elevated'],
           transition: 'opacity 0.4s ease',
-          opacity: bgVisible ? 0 : 1,
+          opacity: showBg ? 0 : 1,
           pointerEvents: 'none',
-          zIndex: 1,
         }}>
-          {/* Shimmer sweep */}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%)',
-            backgroundSize: '800px 100%',
+            background: `linear-gradient(
+              90deg,
+              transparent 0%,
+              rgba(255,255,255,0.06) 40%,
+              rgba(255,255,255,0.1) 50%,
+              rgba(255,255,255,0.06) 60%,
+              transparent 100%
+            )`,
+            backgroundSize: '600px 100%',
             animation: 'bcShimmer 1.4s infinite linear',
           }} />
         </div>
 
-        {/* ── Decoration images (fade in after load) ── */}
+        {/* ── Decoration images (preload silently, fade in when ready) ── */}
         <div style={{
           position: 'absolute', inset: 0,
-          transition: 'opacity 0.4s ease',
-          opacity: bgVisible ? 1 : 0,
+          transition: 'opacity 0.5s ease',
+          opacity: showBg ? 1 : 0,
         }}>
-          <img src={DECORATION_GRADIENT} onLoad={handleLoad}
+          <img src={DECORATION_GRADIENT} onLoad={tryAdvance}
             style={{ position:'absolute', width:469, height:469, left:-250, top:16, objectFit:'cover' }} alt="" />
-          <img src={DECORATION_TEXTURE} onLoad={handleLoad}
+          <img src={DECORATION_TEXTURE} onLoad={tryAdvance}
             style={{ position:'absolute', width:335, height:307, left:123, top:59, objectFit:'cover' }} alt="" />
-          <img src={DECORATION_OVERLAY} onLoad={handleLoad}
+          <img src={DECORATION_OVERLAY} onLoad={tryAdvance}
             style={{ position:'absolute', width:437, height:475, left:0, top:0, objectFit:'cover', opacity:0.35 }} alt="" />
         </div>
 
-        {/* ── Content ── */}
+        {/* ── Content texts ── */}
         <div style={{
-          position: 'absolute',
+          position: 'absolute', zIndex: 5,
           left: spacing[16], top: spacing[16],
           width: 203, height: 175,
           display: 'flex', flexDirection: 'column', gap: 64,
-          zIndex: 2,
         }}>
-          {/* Title */}
           <span style={{
             fontSize: textStyles['Heading/H3'].fontSize,
             fontWeight: textStyles['Heading/H3'].fontWeight,
             lineHeight: `${textStyles['Heading/H3'].lineHeight}px`,
             color: colors['neutral/text-muted'],
-            opacity: textsVisible ? 1 : 0,
-            animation: textsVisible ? 'bcFadeSlide 0.5s ease-out 0ms both' : 'none',
+            opacity: showTexts ? undefined : 0,
+            animation: showTexts ? 'bcFadeSlide 0.5s ease-out 0ms both' : 'none',
           }}>
             {title}
           </span>
 
-          {/* Balance */}
-          <div style={{ display:'flex', flexDirection:'column', gap: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{
               fontSize: textStyles['Heading/Hero'].fontSize,
               fontWeight: textStyles['Heading/Hero'].fontWeight,
               color: colors['surface/on-dark'],
               letterSpacing: textStyles['Heading/Hero'].letterSpacing,
-              opacity: textsVisible ? 1 : 0,
-              animation: textsVisible ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none',
+              opacity: showTexts ? undefined : 0,
+              animation: showTexts ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none',
             }}>
               {value}
             </span>
 
             <div style={{
-              display:'flex', alignItems:'center', gap: spacing[4],
-              opacity: textsVisible ? 1 : 0,
-              animation: textsVisible ? 'bcFadeSlide 0.5s ease-out 300ms both' : 'none',
+              display: 'flex', alignItems: 'center', gap: spacing[4],
+              opacity: showTexts ? undefined : 0,
+              animation: showTexts ? 'bcFadeSlide 0.5s ease-out 300ms both' : 'none',
             }}>
               <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{sign}</span>
               <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{amount}</span>
@@ -177,7 +202,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Hero balance card. Background images load first with a shimmer skeleton, then the texts fade in top → bottom (title 0ms → value 150ms → comparison 300ms).',
+          'Hero balance card. Skeleton shimmer visible for min 800ms → bg fades in → texts stagger top→bottom.',
       },
     },
   },
@@ -191,7 +216,7 @@ const meta: Meta = {
 export default meta;
 
 export const Default: StoryObj = {
-  name: 'Default — shimmer → bg → texts',
+  name: 'Default — skeleton → bg → texts',
   args: { title: 'Balanço do mês', value: 'R$ 8.982', sign: '+', amount: 'R$ 392' },
   render: (args) => <BalanceCardWeb {...args} />,
 };
