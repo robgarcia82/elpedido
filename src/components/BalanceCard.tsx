@@ -118,7 +118,8 @@ export function BalanceCard({
       const tick = () => {
         const elapsed  = Date.now() - countStart;
         const progress = Math.min(elapsed / COUNT_DURATION, 1);
-        const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        // ease-out expo: rockets from 0, dramatically slows near the end
+        const eased    = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
         setDisplayValue(prefix + formatNum(eased * numeric, separator, decimals));
         if (progress < 1) {
           rafRef.current = requestAnimationFrame(tick);
