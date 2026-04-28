@@ -2,13 +2,41 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { colors, spacing, radius, textStyles } from '../theme/tokens';
 
-// Local background asset — no expiry, works offline
 const BG_IMAGE = require('../assets/images/BalanceCardBG.png');
 
-const TOTAL_IMAGES = 1;
+const TOTAL_IMAGES  = 1;
 const MIN_SKELETON_MS = 800;
-const FALLBACK_MS = 2500; // start animation even if images fail to load
+const FALLBACK_MS   = 2500;
+const COUNT_DURATION = 1400; // ms — count-up total duration
 
+// ── Helpers ──────────────────────────────────────────────────
+// Parse "R$ 8.982" → { prefix: "R$ ", numeric: 8982, separator: ".", decimals: 0 }
+function parseValue(raw: string) {
+  const match = raw.match(/^([^0-9]*)([0-9][0-9.,]*)$/);
+  if (!match) return { prefix: '', numeric: 0, separator: '.', decimals: 0 };
+  const prefix  = match[1];
+  const numStr  = match[2];
+  const hasDot  = numStr.includes('.');
+  const hasComma = numStr.includes(',');
+  // Detect thousands separator vs decimal: if last separator has 3 digits after it, it's thousands
+  const separator = (hasDot && !hasComma) ? '.' : ',';
+  const numeric  = parseFloat(numStr.replace(/\./g, '').replace(',', '.'));
+  const decPart  = numStr.split(/[.,]/).slice(-1)[0] ?? '';
+  // If last group has exactly 3 digits and there's no explicit decimal intent, treat as thousands
+  const decimals = decPart.length === 3 ? 0 : decPart.length;
+  return { prefix, numeric, separator, decimals };
+}
+
+function formatNum(value: number, separator: string, decimals: number): string {
+  if (decimals > 0) {
+    return value.toFixed(decimals).replace('.', separator);
+  }
+  return Math.round(value)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+}
+
+// ── Component ────────────────────────────────────────────────
 interface BalanceCardProps {
   title?: string;
   value?: string;
@@ -17,22 +45,25 @@ interface BalanceCardProps {
 }
 
 export function BalanceCard({
-  title = 'Balanço do mês',
-  value = 'R$ 8.982',
-  sign = '+',
+  title  = 'Balanço do mês',
+  value  = 'R$ 8.982',
+  sign   = '+',
   amount = 'R$ 392',
 }: BalanceCardProps) {
   const loadedCount = useRef(0);
-  const startTime = useRef(Date.now());
+  const startTime   = useRef(Date.now());
   const advancedRef = useRef(false);
-  const [bgReady, setBgReady] = useState(false);
+  const rafRef      = useRef<number | null>(null);
+  const [bgReady, setBgReady]       = useState(false);
+  const [displayValue, setDisplayValue] = useState('');
 
+  const parsed = useRef(parseValue(value));
+
+  // Animated values
   const skeletonOpacity = useRef(new Animated.Value(1)).current;
   const bgOpacity       = useRef(new Animated.Value(0)).current;
   const titleOpacity    = useRef(new Animated.Value(0)).current;
   const titleY          = useRef(new Animated.Value(-8)).current;
-  const valueOpacity    = useRef(new Animated.Value(0)).current;
-  const valueY          = useRef(new Animated.Value(-8)).current;
   const compOpacity     = useRef(new Animated.Value(0)).current;
   const compY           = useRef(new Animated.Value(-8)).current;
 
@@ -49,39 +80,69 @@ export function BalanceCard({
     if (loadedCount.current >= TOTAL_IMAGES) advance();
   };
 
-  // Fallback: if images never load, start anyway
+  // Fallback timer
   useEffect(() => {
     const t = setTimeout(advance, FALLBACK_MS);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   useEffect(() => {
     if (!bgReady) return;
+
+    const { prefix, numeric, separator, decimals } = parsed.current;
+
+    // 1. Skeleton out + bg in
     Animated.parallel([
       Animated.timing(skeletonOpacity, { toValue: 0, duration: 400, useNativeDriver: true }),
-      Animated.timing(bgOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
+      Animated.timing(bgOpacity,       { toValue: 1, duration: 400, useNativeDriver: true }),
     ]).start(() => {
+
+      // 2. Fade title + comparison
       const fadeIn = (opacity: Animated.Value, y: Animated.Value) =>
         Animated.parallel([
           Animated.timing(opacity, { toValue: 1, duration: 500, useNativeDriver: true }),
-          Animated.timing(y, { toValue: 0, duration: 500, useNativeDriver: true }),
+          Animated.timing(y,       { toValue: 0, duration: 500, useNativeDriver: true }),
         ]);
       Animated.stagger(150, [
         fadeIn(titleOpacity, titleY),
-        fadeIn(valueOpacity, valueY),
-        fadeIn(compOpacity, compY),
+        fadeIn(compOpacity,  compY),
       ]).start();
+
+      // 3. Count-up: 0 → numeric in COUNT_DURATION ms (ease-out cubic)
+      const countStart = Date.now();
+      setDisplayValue(prefix + formatNum(0, separator, decimals));
+
+      const tick = () => {
+        const elapsed  = Date.now() - countStart;
+        const progress = Math.min(elapsed / COUNT_DURATION, 1);
+        const eased    = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+        setDisplayValue(prefix + formatNum(eased * numeric, separator, decimals));
+        if (progress < 1) {
+          rafRef.current = requestAnimationFrame(tick);
+        }
+      };
+      rafRef.current = requestAnimationFrame(tick);
     });
   }, [bgReady]);
 
   return (
     <View style={styles.container}>
-      {/* Skeleton */}
+
+      {/* Skeleton placeholder */}
       <Animated.View style={[styles.skeleton, { opacity: skeletonOpacity }]} />
 
-      {/* Background image — local asset */}
+      {/* Background image */}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: bgOpacity }]}>
-        <Image source={BG_IMAGE} style={styles.bgImage} resizeMode="cover" onLoad={handleImageLoad} onError={handleImageLoad} />
+        <Image
+          source={BG_IMAGE}
+          style={styles.bgImage}
+          resizeMode="cover"
+          onLoad={handleImageLoad}
+          onError={handleImageLoad}
+        />
       </Animated.View>
 
       {/* Content */}
@@ -89,16 +150,20 @@ export function BalanceCard({
         <Animated.Text style={[styles.title, { opacity: titleOpacity, transform: [{ translateY: titleY }] }]}>
           {title}
         </Animated.Text>
+
         <View style={styles.balanceSection}>
-          <Animated.Text style={[styles.value, { opacity: valueOpacity, transform: [{ translateY: valueY }] }]}>
-            {value}
-          </Animated.Text>
+          {/* Count-up value */}
+          <Text style={styles.value}>
+            {displayValue}
+          </Text>
+
           <Animated.View style={[styles.comparison, { opacity: compOpacity, transform: [{ translateY: compY }] }]}>
             <Text style={styles.sign}>{sign}</Text>
             <Text style={styles.amount}>{amount}</Text>
           </Animated.View>
         </View>
       </View>
+
     </View>
   );
 }
@@ -115,7 +180,10 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors['neutral/surface-elevated'],
   },
-  bgImage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' },
+  bgImage: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    width: '100%', height: '100%',
+  },
   content: {
     position: 'absolute',
     left: spacing[16], top: spacing[16],
