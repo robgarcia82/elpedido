@@ -3,10 +3,8 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  StatusBar,
   Platform,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing } from '../theme/tokens';
 import { BalanceCard } from '../components/BalanceCard';
 import { MetricCard } from '../components/MetricCard';
@@ -14,7 +12,6 @@ import { ChartCard } from '../components/ChartCard';
 import { TabBar } from '../components/TabBar';
 import { BottomNavBar, NavTab } from '../components/BottomNavBar';
 
-// Tab data
 const TABS = [
   { label: 'Vendas', value: 'vendas' },
   { label: 'Clientes', value: 'clientes' },
@@ -28,71 +25,59 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.screen}>
-      {/* Status bar */}
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors['system/background']}
-      />
+      {/* Scrollable content */}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Status bar space */}
+        <View style={styles.statusBarSpace} />
 
-      {/* Safe area top */}
-      <SafeAreaView style={styles.safeTop}>
-        {/* Scrollable content */}
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* ── Balance Card ── */}
-          <View style={styles.section}>
-            <BalanceCard
-              title="Balanço do mês"
-              value="R$ 8.982"
-              sign="+"
-              amount="R$ 392"
+        {/* Balance Card */}
+        <View style={styles.section}>
+          <BalanceCard
+            title="Balanço do mês"
+            value="R$ 8.982"
+            sign="+"
+            amount="R$ 392"
+          />
+        </View>
+
+        {/* Tab Navigation */}
+        <TabBar
+          tabs={TABS}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+
+        {/* Metric Cards + Chart */}
+        <View style={styles.section}>
+          <View style={styles.metricsRow}>
+            <MetricCard
+              title="Ticket médio"
+              currency="R$"
+              number="38,90"
+              percentage="20%"
+              description="mês a mês"
+              width={175}
+            />
+            <MetricCard
+              title="Lucro no mês"
+              currency="R$"
+              number="5.304"
+              percentage="18%"
+              description="de margem"
+              width={175}
             />
           </View>
+          <ChartCard title="Vendas em Abril" />
+        </View>
+      </ScrollView>
 
-          {/* ── Tab Navigation ── */}
-          <TabBar
-            tabs={TABS}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-          />
-
-          {/* ── Metric Cards + Chart ── */}
-          <View style={styles.section}>
-            {/* Metric cards row */}
-            <View style={styles.metricsRow}>
-              <MetricCard
-                title="Ticket médio"
-                currency="R$"
-                number="38,90"
-                percentage="20%"
-                description="mês a mês"
-                width={175}
-              />
-              <MetricCard
-                title="Lucro no mês"
-                currency="R$"
-                number="5.304"
-                percentage="18%"
-                description="de margem de lucro"
-                width={175}
-              />
-            </View>
-
-            {/* Chart card */}
-            <ChartCard title="Vendas em Abril" />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-
-      {/* ── Bottom Navigation Bar (fixed) ── */}
-      <View style={styles.bottomNavWrapper}>
-        <BottomNavBar
-          activeTab={activeNav}
-          onTabChange={setActiveNav}
-        />
+      {/* Bottom Navigation */}
+      <View style={[styles.bottomNav, { paddingBottom: Platform.OS === 'ios' ? 20 : 0 }]}>
+        <BottomNavBar activeTab={activeNav} onTabChange={setActiveNav} />
       </View>
     </View>
   );
@@ -103,14 +88,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors['system/background'],
   },
-  safeTop: {
-    flex: 1,
+  statusBarSpace: {
+    height: Platform.OS === 'ios' ? 50 : 30,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 88, // space for BottomNavBar (72) + extra padding
+    paddingBottom: 100,
     gap: spacing[24],
   },
   section: {
@@ -120,16 +105,18 @@ const styles = StyleSheet.create({
   metricsRow: {
     flexDirection: 'row',
     gap: spacing[8],
-    width: '100%',
     justifyContent: 'space-between',
   },
-  bottomNavWrapper: {
+  bottomNav: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    // Extra padding for iPhone home indicator
-    paddingBottom: Platform.OS === 'ios' ? 20 : 0,
     backgroundColor: colors['neutral/background'],
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10,
   },
 });

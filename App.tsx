@@ -1,11 +1,11 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import {
   Geist_400Regular,
   Geist_500Medium,
 } from '@expo-google-fonts/geist';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './src/screens/HomeScreen';
 
 export default function App() {
@@ -16,15 +16,25 @@ export default function App() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, backgroundColor: '#0E0E0E', justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator color="#4C7DFE" />
+      <View style={styles.loading}>
+        <ActivityIndicator color="#4C7DFE" size="large" />
       </View>
     );
   }
 
   return (
-    <SafeAreaProvider>
+    <>
+      <StatusBar style="light" />
       <HomeScreen />
-    </SafeAreaProvider>
+    </>
   );
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    backgroundColor: '#0E0E0E',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});
