@@ -5,7 +5,6 @@ import {
   Geist_400Regular,
   Geist_500Medium,
 } from '@expo-google-fonts/geist';
-import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './src/screens/HomeScreen';
 
 export default function App() {
@@ -22,12 +21,7 @@ export default function App() {
     );
   }
 
-  return (
-    <>
-      <StatusBar style="light" />
-      <HomeScreen />
-    </>
-  );
+  return <HomeScreen />;
 }
 
 const styles = StyleSheet.create({

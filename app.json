@@ -5,27 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "backgroundColor": "#0E0E0E",
+    "scheme": "elpedido",
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.elpedido.app"
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#0E0E0E"
-      },
       "package": "com.elpedido.app"
-    },
-    "fonts": [
-      {
-        "family": "Geist",
-        "asset": "./src/assets/fonts/Geist-Regular.ttf",
-        "weight": "400"
-      },
-      {
-        "family": "Geist",
-        "asset": "./src/assets/fonts/Geist-Medium.ttf",
-        "weight": "500"
-      }
-    ]
+    }
   }
 }
