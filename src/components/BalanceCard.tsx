@@ -93,7 +93,8 @@ const styles = StyleSheet.create({
     top: spacing[16],
     width: 203,
     height: 175, // 215 (card) - 16 (top) - 24 (bottom) = 175
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start', // primaryAxisAlignItems: MIN
+    gap: 64, // itemSpacing: 64
     overflow: 'hidden',
   },
   title: {
