@@ -2,18 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, Animated } from 'react-native';
 import { colors, spacing, radius, textStyles } from '../theme/tokens';
 
-// Fresh URLs from Figma DS (valid 7 days from last update)
-const DECORATION_GRADIENT = {
-  uri: 'https://www.figma.com/api/mcp/asset/295f7fb8-de15-4df0-aafb-031f7f1b4c14',
-};
-const DECORATION_TEXTURE = {
-  uri: 'https://www.figma.com/api/mcp/asset/4bc47574-afe0-4f93-8fa8-f1fc09e10c55',
-};
-const DECORATION_OVERLAY = {
-  uri: 'https://www.figma.com/api/mcp/asset/2f69cc38-c299-4099-882f-22bb16ebd44b',
-};
+// Local background asset — no expiry, works offline
+const BG_IMAGE = require('../assets/images/BalanceCardBG.png');
 
-const TOTAL_IMAGES = 3;
+const TOTAL_IMAGES = 1;
 const MIN_SKELETON_MS = 800;
 const FALLBACK_MS = 2500; // start animation even if images fail to load
 
@@ -87,11 +79,9 @@ export function BalanceCard({
       {/* Skeleton */}
       <Animated.View style={[styles.skeleton, { opacity: skeletonOpacity }]} />
 
-      {/* Background images */}
+      {/* Background image — local asset */}
       <Animated.View style={[StyleSheet.absoluteFill, { opacity: bgOpacity }]}>
-        <Image source={DECORATION_GRADIENT} style={styles.decorationGradient} resizeMode="cover" onLoad={handleImageLoad} onError={handleImageLoad} />
-        <Image source={DECORATION_TEXTURE}  style={styles.decorationTexture}  resizeMode="cover" onLoad={handleImageLoad} onError={handleImageLoad} />
-        <Image source={DECORATION_OVERLAY}  style={styles.decorationOverlay}  resizeMode="cover" onLoad={handleImageLoad} onError={handleImageLoad} />
+        <Image source={BG_IMAGE} style={styles.bgImage} resizeMode="cover" onLoad={handleImageLoad} onError={handleImageLoad} />
       </Animated.View>
 
       {/* Content */}
@@ -125,9 +115,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: colors['neutral/surface-elevated'],
   },
-  decorationGradient: { position: 'absolute', width: 469, height: 469, left: -250, top: 16 },
-  decorationTexture:  { position: 'absolute', width: 335, height: 307, left: 123,  top: 59 },
-  decorationOverlay:  { position: 'absolute', width: 437, height: 475, left: 0,    top: 0, opacity: 0.35 },
+  bgImage: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' },
   content: {
     position: 'absolute',
     left: spacing[16], top: spacing[16],
