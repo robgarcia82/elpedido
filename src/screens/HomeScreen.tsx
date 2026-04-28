@@ -4,9 +4,9 @@ import {
   ScrollView,
   StyleSheet,
   StatusBar,
-  SafeAreaView,
   Platform,
 } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, spacing } from '../theme/tokens';
 import { BalanceCard } from '../components/BalanceCard';
 import { MetricCard } from '../components/MetricCard';
