@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   indicator: {
     position: 'absolute',
     bottom: 0,
-    left: spacing[16],
+    left: 0,
     height: 2,
     backgroundColor: colors['brand/accent'],
     borderRadius: 1,
