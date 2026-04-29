@@ -2,99 +2,69 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
 import { colors } from '../theme/tokens';
 
-// ── Icon types ────────────────────────────────────────────────
 type IconType =
-  | 'Favoritos' | 'Empty' | 'Arrow left' | 'Search'
-  | 'Home' | 'Clientes' | 'Pedidos' | 'Estoque' | 'Insights'
-  | 'Entradas' | 'Bebidas' | 'Sobremesa' | 'Lanche' | 'Acompanhamento';
+  | 'Favoritos' | 'Arrow left' | 'Entradas' | 'Bebidas'
+  | 'Sobremesa' | 'Lanche' | 'Acompanhamento' | 'Search'
+  | 'Home' | 'Clientes' | 'Pedidos' | 'Estoque' | 'Insights';
 
-// ── SVG paths per icon ────────────────────────────────────────
-const ICON_PATHS: Record<IconType, React.ReactNode> = {
-  Favoritos: <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />,
-  Empty: <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z" />,
-  'Arrow left': <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />,
-  Search: <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />,
-  Home: <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />,
-  Clientes: <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />,
-  Pedidos: <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z" />,
-  Estoque: <path d="M20 2H4v2l4 3.4V21l4-2 4 2V7.4L20 4V2z" />,
-  Insights: <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />,
-  Entradas: <path d="M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1.97v4.05h-4.97l.3 2.34c1.71.47 3.31 1.32 4.27 2.26 1.44 1.42 2.43 2.89 2.43 5.29v8.05zM1 21.99V21h15.03v.99c0 .55-.45 1-1.01 1H2.01c-.56 0-1.01-.45-1.01-1zm15.03-7c0-5.44-8.99-5.44-8.99 0h8.99zM1.02 17h15v2h-15z" />,
-  Bebidas: <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zm0 5h-2V5h2v3zM4 19h16v2H4z" />,
-  Sobremesa: <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />,
-  Lanche: <path d="M4 16v-1.09C2.81 14.47 2 13.33 2 12c0-1.66 1.34-3 3-3 .35 0 .68.07 1 .18V5c0-.55.45-1 1-1h12c.55 0 1 .45 1 1v4.18c.32-.11.65-.18 1-.18 1.66 0 3 1.34 3 3 0 1.33-.81 2.47-2 2.91V16h1v2H3v-2h1zm2 0h12v-1H6v1zm-.5-3.5h13c.28-.31.5-.64.5-1s-.22-.69-.5-1h-13c-.28.31-.5.64-.5 1s.22.69.5 1zM7 9h10V6H7v3z" />,
-  Acompanhamento: <path d="M15.5 2.1L11 6.6 9.5 5.1 5.6 9l1.5 1.5-4.6 4.6L4 18l2.1 2.1L8 22l3.8-3.8 1.5 1.5 3.9-3.9-1.5-1.5 4.5-4.5-4.7-7.7zm.5 9.4L12.3 8l1.4-1.4 3.7 6-1.4 1.4-3.9-2.5zm-8.1.1l3.8-3.8L13.3 9l-3.8 3.8-1.6-1.2z" />,
+// Real SVG paths exported from Figma DS El Pedido
+const ICONS: Record<IconType, React.ReactNode> = {
+  Favoritos: <svg viewBox="0 0 18 17"><path d="M8.877 16.289L7.59 15.135C6.095 13.789 4.86 12.627 3.884 11.651C2.907 10.674 2.13 9.798 1.553 9.021C0.976 8.244 0.573 7.53 0.344 6.879C0.115 6.229 0 5.563 0 4.882C0 3.492 0.466 2.33 1.398 1.398C2.33 0.466 3.492 0 4.882 0C5.652 0 6.384 0.163 7.079 0.488C7.775 0.814 8.373 1.272 8.877 1.864C9.38 1.272 9.979 0.814 10.674 0.488C11.37 0.163 12.102 0 12.871 0C14.262 0 15.423 0.466 16.355 1.398C17.287 2.33 17.753 3.492 17.753 4.882C17.753 5.563 17.639 6.229 17.41 6.879C17.18 7.53 16.777 8.244 16.2 9.021C15.623 9.798 14.846 10.674 13.87 11.651C12.893 12.627 11.658 13.789 10.164 15.135L8.877 16.289Z" fill="currentColor"/></svg>,
+  'Arrow left': <svg viewBox="0 0 24 24"><path d="M19 12H5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/><path d="M12 19L5 12L12 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/></svg>,
+  Search: <svg viewBox="0 0 16 16"><path d="M9.8 9.8C10.7333 8.86667 11.2 7.73333 11.2 6.4C11.2 5.06667 10.7333 3.93333 9.8 3C8.86667 2.06667 7.73333 1.6 6.4 1.6C5.06667 1.6 3.93333 2.06667 3 3C2.06667 3.93333 1.6 5.06667 1.6 6.4C1.6 7.73333 2.06667 8.86667 3 9.8C3.93333 10.7333 5.06667 11.2 6.4 11.2C7.73333 11.2 8.86667 10.7333 9.8 9.8ZM6.4 12.8C4.61333 12.8 3.1 12.18 1.86 10.94C0.62 9.7 0 8.18667 0 6.4C0 4.61333 0.62 3.1 1.86 1.86C3.1 0.62 4.61333 0 6.4 0C8.18667 0 9.7 0.62 10.94 1.86C12.18 3.1 12.8 4.61333 12.8 6.4C12.8 7.14667 12.6833 7.85 12.45 8.51C12.2167 9.17 11.8867 9.77333 11.46 10.32L16 14.88L14.88 16L10.32 11.46C9.77333 11.8867 9.17 12.2167 8.51 12.45C7.85 12.6833 7.14667 12.8 6.4 12.8Z" fill="currentColor"/></svg>,
+  Home: <svg viewBox="0 0 22 21"><path d="M3 20V10.625L1.2 12L0 10.4L3 8.1V5H5V6.575L11 2L22 10.4L20.8 11.975L19 10.625V20H3ZM5 18H10V14H12V18H17V9.1L11 4.525L5 9.1V18ZM3 4C3 3.16667 3.29167 2.45833 3.875 1.875C4.45833 1.29167 5.16667 1 6 1C6.28333 1 6.52083 0.904167 6.7125 0.7125C6.90417 0.520833 7 0.283333 7 0H9C9 0.833333 8.70833 1.54167 8.125 2.125C7.54167 2.70833 6.83333 3 6 3C5.71667 3 5.47917 3.09583 5.2875 3.2875C5.09583 3.47917 5 3.71667 5 4H3Z" fill="currentColor"/></svg>,
+  Clientes: <svg viewBox="0 0 22 22"><path d="M16.675 5.325C18.225 6.875 19 8.76667 19 11C19 13.2333 18.225 15.125 16.675 16.675C15.125 18.225 13.2333 19 11 19C8.76667 19 6.875 18.225 5.325 16.675C3.775 15.125 3 13.2333 3 11C3 8.76667 3.775 6.875 5.325 5.325C6.875 3.775 8.76667 3 11 3C13.2333 3 15.125 3.775 16.675 5.325ZM15.25 15.25C16.4167 14.0833 17 12.6667 17 11C17 9.33333 16.4167 7.91667 15.25 6.75C14.0833 5.58333 12.6667 5 11 5C9.33333 5 7.91667 5.58333 6.75 6.75C5.58333 7.91667 5 9.33333 5 11C5 12.6667 5.58333 14.0833 6.75 15.25C7.91667 16.4167 9.33333 17 11 17C12.6667 17 14.0833 16.4167 15.25 15.25ZM13.15 13.8125C13.7833 13.3542 14.2333 12.75 14.5 12H7.5C7.76667 12.75 8.21667 13.3542 8.85 13.8125C9.48333 14.2708 10.2 14.5 11 14.5C11.8 14.5 12.5167 14.2708 13.15 13.8125ZM7.7875 9.7125C7.97917 9.90417 8.21667 10 8.5 10C8.78333 10 9.02083 9.90417 9.2125 9.7125C9.40417 9.52083 9.5 9.28333 9.5 9C9.5 8.71667 9.40417 8.47917 9.2125 8.2875C9.02083 8.09583 8.78333 8 8.5 8C8.21667 8 7.97917 8.09583 7.7875 8.2875C7.59583 8.47917 7.5 8.71667 7.5 9C7.5 9.28333 7.59583 9.52083 7.7875 9.7125ZM12.7875 9.7125C12.9792 9.90417 13.2167 10 13.5 10C13.7833 10 14.0208 9.90417 14.2125 9.7125C14.4042 9.52083 14.5 9.28333 14.5 9C14.5 8.71667 14.4042 8.47917 14.2125 8.2875C14.0208 8.09583 13.7833 8 13.5 8C13.2167 8 12.9792 8.09583 12.7875 8.2875C12.5958 8.47917 12.5 8.71667 12.5 9C12.5 9.28333 12.5958 9.52083 12.7875 9.7125ZM0 5V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H5V2H2V5H0ZM5 22H2C1.45 22 0.979167 21.8042 0.5875 21.4125C0.195833 21.0208 0 20.55 0 20V17H2V20H5V22ZM17 22V20H20V17H22V20C22 20.55 21.8042 21.0208 21.4125 21.4125C21.0208 21.8042 20.55 22 20 22H17ZM20 5V2H17V0H20C20.55 0 21.0208 0.195833 21.4125 0.5875C21.8042 0.979167 22 1.45 22 2V5H20Z" fill="currentColor"/></svg>,
+  Pedidos: <svg viewBox="0 0 18 20"><path d="M5.7125 15.2361C5.90417 15.0231 6 14.7593 6 14.4444C6 14.1296 5.90417 13.8657 5.7125 13.6528C5.52083 13.4398 5.28333 13.3333 5 13.3333C4.71667 13.3333 4.47917 13.4398 4.2875 13.6528C4.09583 13.8657 4 14.1296 4 14.4444C4 14.7593 4.09583 15.0231 4.2875 15.2361C4.47917 15.4491 4.71667 15.5556 5 15.5556C5.28333 15.5556 5.52083 15.4491 5.7125 15.2361ZM5.7125 10.7917C5.90417 10.5787 6 10.3148 6 10C6 9.68519 5.90417 9.4213 5.7125 9.20833C5.52083 8.99537 5.28333 8.88889 5 8.88889C4.71667 8.88889 4.47917 8.99537 4.2875 9.20833C4.09583 9.4213 4 9.68519 4 10C4 10.3148 4.09583 10.5787 4.2875 10.7917C4.47917 11.0046 4.71667 11.1111 5 11.1111C5.28333 11.1111 5.52083 11.0046 5.7125 10.7917ZM5.7125 6.34722C5.90417 6.13426 6 5.87037 6 5.55556C6 5.24074 5.90417 4.97685 5.7125 4.76389C5.52083 4.55093 5.28333 4.44444 5 4.44444C4.71667 4.44444 4.47917 4.55093 4.2875 4.76389C4.09583 4.97685 4 5.24074 4 5.55556C4 5.87037 4.09583 6.13426 4.2875 6.34722C4.47917 6.56019 4.71667 6.66667 5 6.66667C5.28333 6.66667 5.52083 6.56019 5.7125 6.34722ZM8 15.5556H14V13.3333H8V15.5556ZM8 11.1111H14V8.88889H8V11.1111ZM8 6.66667H14V4.44444H8V6.66667ZM2 20C1.45 20 0.979167 19.7824 0.5875 19.3472C0.195833 18.912 0 18.3889 0 17.7778V2.22222C0 1.61111 0.195833 1.08796 0.5875 0.652778C0.979167 0.217593 1.45 0 2 0H16C16.55 0 17.0208 0.217593 17.4125 0.652778C17.8042 1.08796 18 1.61111 18 2.22222V17.7778C18 18.3889 17.8042 18.912 17.4125 19.3472C17.0208 19.7824 16.55 20 16 20H2ZM2 17.7778H16V2.22222H2V17.7778Z" fill="currentColor"/></svg>,
+  Estoque: <svg viewBox="0 0 20 20"><path d="M3 20C2.45 20 1.97917 19.8042 1.5875 19.4125C1.19583 19.0208 1 18.55 1 18V6.725C0.7 6.54167 0.458333 6.30417 0.275 6.0125C0.0916667 5.72083 0 5.38333 0 5V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H18C18.55 0 19.0208 0.195833 19.4125 0.5875C19.8042 0.979167 20 1.45 20 2V5C20 5.38333 19.9083 5.72083 19.725 6.0125C19.5417 6.30417 19.3 6.54167 19 6.725V18C19 18.55 18.8042 19.0208 18.4125 19.4125C18.0208 19.8042 17.55 20 17 20H3ZM3 18H17V7H3V18ZM2 5H18V2H2V5ZM8 13H12V11H8V13Z" fill="currentColor"/></svg>,
+  Insights: <svg viewBox="0 0 22 22"><path d="M10 21.975V14.975L4.525 17.9L3.5 16.1L9.375 13L3.5 9.9L4.525 8.1L10 11.025V4H12V11.025L17.475 8.1L18.5 9.9L12.625 13L18.5 16.1L17.475 17.9L12 14.975V21.975H10Z" fill="currentColor"/></svg>,
+  Entradas: <svg viewBox="0 0 24 24"><path d="M8.028 12.056C8.028 10.95 8.211 9.905 8.634 8.923C9.057 7.941 9.632 7.086 10.359 6.359C11.086 5.632 11.941 5.057 12.923 4.634C13.905 4.211 14.95 4 16.056 4C16.765 4 17.446 4.087 18.098 4.261C18.751 4.435 19.369 4.684 19.954 5.007C20.339 4.945 20.731 4.911 21.129 4.904C21.526 4.898 21.924 4.895 22.322 4.895C22.322 5.256 22.313 5.598 22.294 5.921C22.276 6.244 22.248 6.555 22.21 6.853C22.807 7.562 23.273 8.358 23.609 9.240C23.945 10.123 24.112 11.062 24.112 12.056C24.112 13.163 23.901 14.207 23.478 15.189C23.056 16.171 22.481 17.026 21.753 17.753C21.026 18.481 20.171 19.056 19.189 19.478C18.207 19.901 17.163 20.112 16.056 20.112C14.95 20.112 13.905 19.901 12.923 19.478C11.941 19.056 11.086 18.481 10.359 17.753C9.632 17.026 9.057 16.171 8.634 15.189C8.211 14.207 8.028 13.163 8.028 12.056Z" fill="currentColor"/></svg>,
+  Bebidas: <svg viewBox="0 0 22 22"><path d="M6.419 21V19.264H11.624V15.014L4 6.358V4H21V6.358L13.376 15.014V19.264H18.581V21H6.419ZM7.4 7.576H17.6L19.222 5.736H5.778L7.4 7.576ZM12.5 13.329L16.07 9.313H8.93L12.5 13.329Z" fill="currentColor"/></svg>,
+  Sobremesa: <svg viewBox="0 0 22 22"><path d="M12.5 21C11.324 21 10.219 20.777 9.185 20.332C8.151 19.886 7.251 19.281 6.486 18.517C5.721 17.753 5.116 16.854 4.669 15.821C4.223 14.789 4 13.685 4 12.511C4 11.449 4.205 10.410 4.616 9.391C5.027 8.372 5.601 7.463 6.338 6.664C7.074 5.864 7.960 5.220 8.994 4.732C10.028 4.244 11.161 4 12.394 4C12.691 4 12.996 4.014 13.308 4.042C13.619 4.071 13.938 4.120 14.264 4.191C14.136 4.828 14.179 5.429 14.391 5.995C14.604 6.561 14.923 7.031 15.348 7.406C15.773 7.781 16.279 8.040 16.867 8.181C17.455 8.323 18.060 8.287 18.684 8.075C18.315 8.910 18.369 9.709 18.843 10.473C19.318 11.237 20.023 11.633 20.958 11.662C20.972 11.817 20.982 11.962 20.989 12.097C20.997 12.231 21 12.376 21 12.532C21 13.692 20.777 14.785 20.331 15.811C19.884 16.837 19.279 17.735 18.514 18.506C17.749 19.277 16.849 19.886 15.815 20.332C14.781 20.777 13.676 21 12.5 21ZM11.225 10.813C11.579 10.813 11.880 10.689 12.128 10.441C12.376 10.194 12.5 9.893 12.5 9.539C12.5 9.186 12.376 8.885 12.128 8.637C11.880 8.390 11.579 8.266 11.225 8.266C10.871 8.266 10.570 8.390 10.322 8.637C10.074 8.885 9.95 9.186 9.95 9.539C9.95 9.893 10.074 10.194 10.322 10.441C10.570 10.689 10.871 10.813 11.225 10.813ZM9.525 15.057C9.879 15.057 10.180 14.934 10.428 14.686C10.676 14.438 10.8 14.138 10.8 13.784C10.8 13.430 10.676 13.130 10.428 12.882C10.180 12.634 9.879 12.511 9.525 12.511C9.171 12.511 8.870 12.634 8.622 12.882C8.374 13.130 8.25 13.430 8.25 13.784C8.25 14.138 8.374 14.438 8.622 14.686C8.870 14.934 9.171 15.057 9.525 15.057ZM15.05 15.906C15.291 15.906 15.493 15.825 15.656 15.662C15.819 15.500 15.9 15.298 15.9 15.057C15.9 14.817 15.819 14.615 15.656 14.453C15.493 14.290 15.291 14.209 15.05 14.209C14.809 14.209 14.607 14.290 14.444 14.453C14.282 14.615 14.2 14.817 14.2 15.057C14.2 15.298 14.282 15.500 14.444 15.662C14.607 15.825 14.809 15.906 15.05 15.906ZM12.5 19.302C14.228 19.302 15.762 18.708 17.101 17.519C18.439 16.331 19.173 14.817 19.3 12.978C18.592 12.666 18.036 12.242 17.632 11.704C17.228 11.167 16.955 10.565 16.814 9.900C15.723 9.744 14.788 9.278 14.009 8.499C13.230 7.721 12.748 6.787 12.564 5.698C11.430 5.670 10.435 5.875 9.578 6.313C8.721 6.752 8.006 7.314 7.432 8.001C6.858 8.687 6.426 9.433 6.136 10.240C5.845 11.046 5.7 11.803 5.7 12.511C5.7 14.392 6.362 15.995 7.687 17.318C9.011 18.641 10.616 19.302 12.5 19.302Z" fill="currentColor"/></svg>,
+  Lanche: <svg viewBox="0 0 22 21"><path d="M5.612 21C5.169 21 4.789 20.839 4.474 20.517C4.158 20.195 4 19.808 4 19.356V16.460H22V19.356C22 19.813 21.842 20.201 21.526 20.521C21.211 20.840 20.831 21 20.388 21H5.612ZM5.612 18.104V19.356H20.388V18.104H5.612ZM4 10.693V10.718C4 9.213 4.826 7.883 6.479 6.730C8.131 5.577 10.305 5 13 5C15.695 5 17.869 5.577 19.521 6.730C21.174 7.883 22 9.213 22 10.718V10.693H4ZM13.012 6.644C11.705 6.644 10.443 6.847 9.228 7.252C8.013 7.656 7.000 8.256 6.190 9.049H19.810C19.016 8.256 18.011 7.656 16.796 7.252C15.581 6.847 14.320 6.644 13.012 6.644Z" fill="currentColor"/></svg>,
+  Acompanhamento: <svg viewBox="0 0 20 21"><path d="M10.009 17C10.836 17 11.542 16.709 12.125 16.126C12.708 15.543 13 14.831 13 13.991C13 13.164 12.707 12.458 12.120 11.875C11.533 11.292 10.828 11 10.004 11C9.168 11 8.458 11.293 7.875 11.880C7.292 12.467 7 13.172 7 13.996C7 14.832 7.291 15.542 7.874 16.125C8.457 16.708 9.169 17 10.009 17ZM9.990 15.5C9.580 15.5 9.229 15.354 8.938 15.063C8.646 14.771 8.5 14.420 8.5 14.010C8.5 13.601 8.646 13.247 8.938 12.948C9.229 12.649 9.580 12.5 9.990 12.5C10.399 12.5 10.754 12.649 11.052 12.948C11.351 13.247 11.5 13.601 11.5 14.010C11.5 14.420 11.351 14.771 11.052 15.063C10.754 15.354 10.399 15.5 9.990 15.5ZM10 20C7.861 20 6.326 19.334 5.396 18.001C4.465 16.668 4 15.203 4 13.603C4 12.604 4.153 11.542 4.458 10.417C4.764 9.292 5.185 8.255 5.721 7.306C6.257 6.358 6.889 5.570 7.616 4.942C8.344 4.314 9.136 4 9.993 4C10.742 4 11.444 4.236 12.100 4.708C12.756 5.181 13.338 5.794 13.848 6.550C14.358 7.305 14.785 8.152 15.129 9.091C15.474 10.030 15.708 10.972 15.833 11.917H14.354C14.215 11.056 13.986 10.236 13.667 9.458C13.347 8.681 12.986 8.000 12.583 7.417C12.181 6.833 11.754 6.368 11.302 6.021C10.851 5.674 10.419 5.500 10.006 5.500C9.516 5.500 9.007 5.729 8.479 6.188C7.951 6.646 7.465 7.253 7.021 8.010C6.576 8.767 6.212 9.632 5.927 10.604C5.642 11.576 5.500 12.576 5.500 13.604C5.500 13.896 5.538 14.313 5.615 14.854C5.691 15.396 5.878 15.938 6.177 16.479C6.476 17.021 6.927 17.493 7.531 17.896C8.135 18.299 8.958 18.500 10 18.500H10.240C10.403 18.479 10.500 18.479 10.500 18.479C10.500 18.734 10.500 18.988 10.542 19.243C10.583 19.498 10.646 19.743 10.729 19.979C10.618 19.993 10.500 20 10.375 20H10Z" fill="currentColor"/></svg>,
 };
 
-const ALL_ICONS = Object.keys(ICON_PATHS) as IconType[];
-
+const ALL_ICONS = Object.keys(ICONS) as IconType[];
 const CATEGORIES = {
   'Navegação': ['Home', 'Clientes', 'Pedidos', 'Estoque', 'Insights'] as IconType[],
   'Categorias': ['Entradas', 'Bebidas', 'Sobremesa', 'Lanche', 'Acompanhamento'] as IconType[],
-  'UI': ['Search', 'Arrow left', 'Favoritos', 'Empty'] as IconType[],
+  'UI': ['Search', 'Arrow left', 'Favoritos'] as IconType[],
 };
 
-// ── Icon SVG component ────────────────────────────────────────
 function IconSvg({ type, size = 24, color = '#fff' }: { type: IconType; size?: number; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
-      {ICON_PATHS[type]}
-    </svg>
+    <span style={{ display: 'inline-flex', width: size, height: size, color, flexShrink: 0 }}>
+      {React.cloneElement(ICONS[type] as React.ReactElement, { width: size, height: size })}
+    </span>
   );
 }
 
-// ── Icon card ─────────────────────────────────────────────────
 function IconCard({ type, color }: { type: IconType; color: string }) {
   const [copied, setCopied] = useState(false);
-  const copy = () => {
-    navigator.clipboard?.writeText(type);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1200);
-  };
   return (
-    <div
-      onClick={copy}
-      title={`type="${type}"`}
-      style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
-        padding: '16px 12px', borderRadius: 12,
-        backgroundColor: colors['neutral/surface-elevated'],
-        cursor: 'pointer', width: 88, transition: 'background 0.15s',
-        border: `1px solid ${copied ? colors['brand/accent'] : 'transparent'}`,
-      }}
-    >
+    <div onClick={() => { navigator.clipboard?.writeText(type); setCopied(true); setTimeout(() => setCopied(false), 1200); }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: '16px 12px', borderRadius: 12, backgroundColor: colors['neutral/surface-elevated'], cursor: 'pointer', width: 88, border: `1px solid ${copied ? colors['brand/accent'] : 'transparent'}` }}>
       <IconSvg type={type} color={color} />
-      <span style={{ fontSize: 10, color: copied ? colors['brand/accent'] : colors['neutral/text-tertiary'], fontFamily: 'Geist, monospace', textAlign: 'center', lineHeight: 1.3 }}>
-        {copied ? 'Copied!' : type}
-      </span>
+      <span style={{ fontSize: 10, color: copied ? colors['brand/accent'] : colors['neutral/text-tertiary'], fontFamily: 'Geist, monospace', textAlign: 'center', lineHeight: 1.3 }}>{copied ? 'Copied!' : type}</span>
     </div>
   );
 }
 
-// ── Stories ───────────────────────────────────────────────────
 const meta: Meta = {
   title: 'Components/Icon',
-  parameters: {
-    backgrounds: { default: 'dark' },
-    docs: {
-      description: {
-        component: 'Icon library for DS El Pedido. 14 icons organized by category. Click any icon to copy its `type` value.',
-      },
-    },
-  },
+  parameters: { backgrounds: { default: 'dark' }, docs: { description: { component: 'Icon library — 13 SVG icons from DS El Pedido. Click to copy type value.' } } },
 };
 export default meta;
 
-// All icons by category
 export const AllIcons: StoryObj = {
   name: 'All icons',
   render: () => (
     <div style={{ fontFamily: 'Geist, system-ui, sans-serif', display: 'flex', flexDirection: 'column', gap: 32 }}>
-      {Object.entries(CATEGORIES).map(([category, icons]) => (
-        <div key={category}>
-          <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>{category}</div>
+      {Object.entries(CATEGORIES).map(([cat, icons]) => (
+        <div key={cat}>
+          <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>{cat}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {icons.map(type => <IconCard key={type} type={type} color={colors['surface/on-dark']} />)}
+            {icons.map(t => <IconCard key={t} type={t} color={colors['surface/on-dark']} />)}
           </div>
         </div>
       ))}
@@ -102,43 +72,24 @@ export const AllIcons: StoryObj = {
   ),
 };
 
-// Active vs Inactive state
 export const ActiveInactive: StoryObj = {
   name: 'Active / Inactive',
   render: () => (
     <div style={{ fontFamily: 'Geist, system-ui, sans-serif', display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div>
-        <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>Active — icon/active</div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {(['Home','Clientes','Pedidos','Estoque','Insights'] as IconType[]).map(t => <IconCard key={t} type={t} color={colors['icon/active']} />)}
-        </div>
-      </div>
-      <div>
-        <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>Inactive — icon/inactive</div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {(['Home','Clientes','Pedidos','Estoque','Insights'] as IconType[]).map(t => <IconCard key={t} type={t} color={colors['icon/inactive']} />)}
-        </div>
-      </div>
-    </div>
-  ),
-};
-
-// Size scale
-export const Sizes: StoryObj = {
-  name: 'Sizes',
-  render: () => (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 24, fontFamily: 'Geist, system-ui, sans-serif' }}>
-      {[16, 20, 24, 32, 40].map(size => (
-        <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <IconSvg type="Home" size={size} color={colors['surface/on-dark']} />
-          <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'] }}>{size}px</span>
+      {(['Active', 'Inactive'] as const).map(state => (
+        <div key={state}>
+          <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 12 }}>{state} — icon/{state.toLowerCase()}</div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            {(['Home','Clientes','Pedidos','Estoque','Insights'] as IconType[]).map(t => (
+              <IconCard key={t} type={t} color={state === 'Active' ? colors['icon/active'] : colors['icon/inactive']} />
+            ))}
+          </div>
         </div>
       ))}
     </div>
   ),
 };
 
-// Interactive picker
 export const Picker: StoryObj = {
   name: 'Interactive picker',
   render: () => {
@@ -146,7 +97,6 @@ export const Picker: StoryObj = {
     const [color, setColor] = useState(colors['icon/active']);
     return (
       <div style={{ fontFamily: 'Geist, system-ui, sans-serif', display: 'flex', flexDirection: 'column', gap: 24 }}>
-        {/* Preview */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: 24, backgroundColor: colors['neutral/surface-elevated'], borderRadius: 16 }}>
           <IconSvg type={active} size={48} color={color} />
           <div>
@@ -154,17 +104,15 @@ export const Picker: StoryObj = {
             <div style={{ color: colors['neutral/text-tertiary'], fontSize: 12, marginTop: 4, fontFamily: 'monospace' }}>type="{active}"</div>
           </div>
         </div>
-        {/* Color selector */}
         <div style={{ display: 'flex', gap: 8 }}>
           {[colors['surface/on-dark'], colors['icon/active'], colors['icon/inactive'], colors['feedback/positive'], colors['brand/accent']].map(c => (
             <button key={c} onClick={() => setColor(c)} style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: c, border: c === color ? '2px solid white' : '2px solid transparent', cursor: 'pointer' }} />
           ))}
         </div>
-        {/* Grid */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-          {ALL_ICONS.map(type => (
-            <div key={type} onClick={() => setActive(type)} style={{ padding: 12, borderRadius: 10, backgroundColor: active === type ? colors['brand/accent'] + '33' : colors['neutral/surface-elevated'], border: `1px solid ${active === type ? colors['brand/accent'] : 'transparent'}`, cursor: 'pointer', transition: 'all 0.15s' }}>
-              <IconSvg type={type} color={active === type ? colors['brand/accent'] : color} />
+          {ALL_ICONS.map(t => (
+            <div key={t} onClick={() => setActive(t)} style={{ padding: 12, borderRadius: 10, backgroundColor: active === t ? colors['brand/accent'] + '33' : colors['neutral/surface-elevated'], border: `1px solid ${active === t ? colors['brand/accent'] : 'transparent'}`, cursor: 'pointer' }}>
+              <IconSvg type={t} color={active === t ? colors['brand/accent'] : color} />
             </div>
           ))}
         </div>
