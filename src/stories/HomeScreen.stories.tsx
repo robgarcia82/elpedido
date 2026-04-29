@@ -7,7 +7,7 @@ import { colors, spacing, textStyles, radius } from '../theme/tokens';
 function BalanceCardSimple() {
   return (
     <div style={{ width: '100%', height: 215, backgroundColor: colors['neutral/background'], borderRadius: radius.md, overflow: 'hidden', position: 'relative', fontFamily: 'inherit' }}>
-      <img src="/BalanceCardBG.png" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+      <img src="./BalanceCardBG.png" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
       <div style={{ position: 'absolute', left: spacing[16], top: spacing[16], width: 203 }}>
         <div style={{ color: colors['neutral/text-muted'], fontSize: 14, marginBottom: 64 }}>Balanço do mês</div>
         <div style={{ color: colors['surface/on-dark'], fontSize: 48, fontWeight: '400', letterSpacing: -0.5, lineHeight: 1 }}>R$ 8.982</div>

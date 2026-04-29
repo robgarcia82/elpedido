@@ -13,6 +13,11 @@ const config: StorybookConfig = {
     name: '@storybook/react-vite',
     options: {},
   },
+  viteFinal: async (config) => {
+    // Set base path for GitHub Pages deployment at /elpedido/
+    config.base = '/elpedido/';
+    return config;
+  },
 };
 
 export default config;

@@ -20,7 +20,7 @@ function injectStyles() {
   document.head.appendChild(s);
 }
 
-const BG_IMAGE = '/BalanceCardBG.png';
+const BG_IMAGE = './BalanceCardBG.png';
 const MIN_SKELETON_MS = 800;
 
 interface Props { title?: string; value?: string; sign?: string; amount?: string; }
