@@ -17,3 +17,6 @@ export type { IconType } from './components/Icon';
 -e 
 export { Topbar } from './components/Topbar';
 export type { TopbarProps } from './components/Topbar';
+-e 
+export { Segment } from './components/Segment';
+export type { SegmentProps } from './components/Segment';
