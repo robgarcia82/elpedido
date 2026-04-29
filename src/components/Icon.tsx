@@ -7,9 +7,14 @@ export type IconType =
   | 'Sobremesa' | 'Lanche' | 'Acompanhamento' | 'Search'
   | 'Home' | 'Clientes' | 'Pedidos' | 'Estoque' | 'Insights';
 
+// Icon size tokens — matches Figma DS variables icon/size-sm and icon/size-md
+export type IconSize = 16 | 24;
+
 interface IconProps {
   type: IconType;
-  size?: number;
+  /** Icon size in px. Use 24 for navigation/actions, 16 for inline/chips/badges.
+   *  Maps to Figma tokens: icon/size-sm (16) | icon/size-md (24) */
+  size?: IconSize;
   color?: string;
 }
 
