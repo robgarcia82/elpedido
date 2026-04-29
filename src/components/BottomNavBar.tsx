@@ -1,11 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import { colors, spacing, textStyles } from '../theme/tokens';
-import { Icon, IconName } from './Icon';
+import { Icon, IconType } from './Icon';
 
 export type NavTab = 'Home' | 'Clientes' | 'Pedidos' | 'Estoque' | 'Insights';
 
-const NAV_ITEMS: { label: string; tab: NavTab; icon: IconName }[] = [
+const NAV_ITEMS: { label: string; tab: NavTab; icon: IconType }[] = [
   { label: 'Home',     tab: 'Home',     icon: 'Home' },
   { label: 'Clientes', tab: 'Clientes', icon: 'Clientes' },
   { label: 'Pedidos',  tab: 'Pedidos',  icon: 'Pedidos' },
@@ -23,7 +28,7 @@ export function BottomNavBar({ activeTab, onTabChange }: BottomNavBarProps) {
     <View style={styles.container}>
       {NAV_ITEMS.map(({ label, tab, icon }) => {
         const isActive = tab === activeTab;
-        const color = isActive ? colors['icon/active'] : colors['icon/inactive'];
+        const iconColor = isActive ? colors['icon/active'] : colors['icon/inactive'];
 
         return (
           <TouchableOpacity
@@ -32,8 +37,8 @@ export function BottomNavBar({ activeTab, onTabChange }: BottomNavBarProps) {
             onPress={() => onTabChange(tab)}
             activeOpacity={0.7}
           >
-            <Icon name={icon} size={24} color={color} />
-            <Text style={[styles.label, { color }]}>{label}</Text>
+            <Icon type={icon} size={24} color={iconColor} />
+            <Text style={[styles.label, { color: iconColor }]}>{label}</Text>
           </TouchableOpacity>
         );
       })}
@@ -47,7 +52,6 @@ const styles = StyleSheet.create({
     height: 72,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: spacing[4],
     backgroundColor: colors['neutral/background'],
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -1 },
