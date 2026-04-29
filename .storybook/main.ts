@@ -14,8 +14,19 @@ const config: StorybookConfig = {
     options: {},
   },
   viteFinal: async (config) => {
-    // Set base path for GitHub Pages deployment at /elpedido/
     config.base = '/elpedido/';
+
+    // Strip "use client" directives that break Vite bundling
+    config.plugins = config.plugins || [];
+    config.plugins.push({
+      name: 'strip-use-client',
+      transform(code: string, id: string) {
+        if (id.includes('node_modules') && code.includes('"use client"')) {
+          return { code: code.replace(/"use client";\s*/g, '') };
+        }
+      },
+    });
+
     return config;
   },
 };
