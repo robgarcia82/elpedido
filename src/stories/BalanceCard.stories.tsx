@@ -63,6 +63,19 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
   const prefix = value.match(/^([^0-9]*)/)?.[1] ?? '';
   const sep = value.includes('.') && !value.includes(',') ? '.' : ',';
 
+  // NumberFlow needs to START at 0 and then receive the real value
+  // We delay the value change by 150ms to sync with the fade-in animation
+  const [displayedValue, setDisplayedValue] = useState(0);
+
+  useEffect(() => {
+    if (phase === 'texts-in') {
+      const t = setTimeout(() => setDisplayedValue(parsedValue), 150);
+      return () => clearTimeout(t);
+    } else {
+      setDisplayedValue(0);
+    }
+  }, [phase, parsedValue]);
+
   const showBg    = phase === 'bg-in' || phase === 'texts-in';
   const showTexts = phase === 'texts-in';
 
@@ -92,7 +105,7 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
           </AnimatePresence>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <NumberFlow
-              value={showTexts ? parsedValue : 0}
+              value={displayedValue}
               prefix={prefix}
               locales="pt-BR"
               plugins={[continuous]}
