@@ -39,7 +39,6 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
     setPhase('skeleton');
     loadedRef.current = false;
     startRef.current = Date.now();
-    setDisplayValue('');
   }, [animKey]);
 
   const advance = () => {
