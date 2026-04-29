@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState, useRef, useEffect } from 'react';
-import NumberFlow from '@number-flow/react';
+import NumberFlow, { continuous } from '@number-flow/react';
 import { colors, spacing, textStyles, radius } from '../theme/tokens';
 
 const STYLE_ID = 'bc-keyframes';
@@ -81,23 +81,28 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
         <div style={{ position: 'absolute', left: spacing[16], top: spacing[16], width: 203, height: 175, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: 64, zIndex: 5 }}>
           <span style={{ fontSize: textStyles['Heading/H3'].fontSize, fontWeight: textStyles['Heading/H3'].fontWeight, color: colors['neutral/text-muted'], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 0ms both' : 'none' }}>{title}</span>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <NumberFlow
-              value={showTexts ? parsedValue : 0}
-              prefix={prefix}
-              locales="pt-BR"
-              transformTiming={{ duration: 1400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-              spinTiming={{ duration: 1400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-              opacityTiming={{ duration: 400, easing: 'ease-out' }}
-              style={{
-                fontSize: textStyles['Heading/Hero'].fontSize,
-                fontWeight: textStyles['Heading/Hero'].fontWeight,
-                letterSpacing: textStyles['Heading/Hero'].letterSpacing,
-                color: colors['surface/on-dark'],
-                opacity: showTexts ? 1 : 0,
-                animation: showTexts ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none',
-                lineHeight: 1,
-              }}
-            />
+            <div style={{
+              opacity: showTexts ? 1 : 0,
+              animation: showTexts ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none',
+            }}>
+              <NumberFlow
+                value={showTexts ? parsedValue : 0}
+                prefix={prefix}
+                locales="pt-BR"
+                plugins={[continuous]}
+                transformTiming={{ duration: 900, easing: 'linear(0,0.006,0.025 2.8%,0.101 6.1%,0.539 18.9%,0.721 25.3%,0.849 31.5%,0.937 38.1%,0.968 41.8%,1 47.3%,0.996,0.998,1)' }}
+                spinTiming={{ duration: 900, easing: 'linear(0,0.006,0.025 2.8%,0.101 6.1%,0.539 18.9%,0.721 25.3%,0.849 31.5%,0.937 38.1%,0.968 41.8%,1 47.3%,0.996,0.998,1)' }}
+                opacityTiming={{ duration: 300, easing: 'ease-out' }}
+                style={{
+                  fontSize: textStyles['Heading/Hero'].fontSize,
+                  fontWeight: textStyles['Heading/Hero'].fontWeight,
+                  letterSpacing: textStyles['Heading/Hero'].letterSpacing,
+                  color: colors['surface/on-dark'],
+                  lineHeight: 1,
+                  '--number-flow-mask-height': '0.2em',
+                } as React.CSSProperties}
+              />
+            </div>
             <div style={{ display: 'flex', gap: spacing[4], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 300ms both' : 'none' }}>
               <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{sign}</span>
               <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{amount}</span>
