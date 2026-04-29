@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState, useRef, useEffect } from 'react';
 import NumberFlow, { continuous } from '@number-flow/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { colors, spacing, textStyles, radius } from '../theme/tokens';
 
 const STYLE_ID = 'bc-keyframes';
@@ -79,7 +80,17 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
         </div>
         {/* Content */}
         <div style={{ position: 'absolute', left: spacing[16], top: spacing[16], width: 203, height: 175, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: 64, zIndex: 5 }}>
-          <span style={{ fontSize: textStyles['Heading/H3'].fontSize, fontWeight: textStyles['Heading/H3'].fontWeight, color: colors['neutral/text-muted'], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 0ms both' : 'none' }}>{title}</span>
+          <AnimatePresence>
+            {showTexts && (
+              <motion.span
+                layout
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                style={{ fontSize: textStyles['Heading/H3'].fontSize, fontWeight: textStyles['Heading/H3'].fontWeight, color: colors['neutral/text-muted'], display: 'block' }}
+              >{title}</motion.span>
+            )}
+          </AnimatePresence>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <NumberFlow
               value={showTexts ? parsedValue : 0}
@@ -102,10 +113,20 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
                 animation: showTexts ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none',
               } as React.CSSProperties}
             />
-            <div style={{ display: 'flex', gap: spacing[4], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 300ms both' : 'none' }}>
-              <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{sign}</span>
-              <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{amount}</span>
-            </div>
+            <AnimatePresence>
+              {showTexts && (
+                <motion.div
+                  layout
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+                  style={{ display: 'flex', gap: spacing[4] }}
+                >
+                  <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{sign}</span>
+                  <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{amount}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
