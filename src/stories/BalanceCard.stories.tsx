@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState, useRef, useEffect } from 'react';
-import NumberFlow, { continuous } from '@number-flow/react';
+import NumberFlow from '@number-flow/react';
 import { colors, spacing, textStyles, radius } from '../theme/tokens';
 
 // CSS injected once
@@ -153,7 +153,6 @@ function BalanceCard({
               value={flowValue}
               prefix={prefix}
               locales="pt-BR"
-              plugins={[continuous]}
               respectMotionPreference={false}
               transformTiming={{ duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
               spinTiming={{ duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
