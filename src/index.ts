@@ -14,3 +14,6 @@ export * from './theme/tokens';
 
 export { Icon } from './components/Icon';
 export type { IconType } from './components/Icon';
+-e 
+export { Topbar } from './components/Topbar';
+export type { TopbarProps } from './components/Topbar';
