@@ -31,7 +31,7 @@ const tokens = {
   trackPadding: spacing[4],                            // segment/track-padding
   itemPaddingH: spacing[16],                           // segment/item-padding-h
   itemPaddingV: 6,                                     // segment/item-padding-v
-  itemHeight:   44,                                    // segment/item-height
+  itemHeight:   48,                                    // segment/item-height
   itemRadius:   62,                                    // segment/item-radius
   trackRadius:  radius.full,                           // segment/track-radius
 } as const;

@@ -11,7 +11,7 @@ const tokens = {
   trackPadding: spacing[4],
   itemPaddingH: spacing[16],
   itemPaddingV: 6,
-  itemHeight:   44,
+  itemHeight:   48,
   itemRadius:   62,
   trackRadius:  radius.full,
 };
