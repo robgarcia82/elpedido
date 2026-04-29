@@ -97,9 +97,9 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
               locales="pt-BR"
               plugins={[continuous]}
               respectMotionPreference={false}
-              transformTiming={{ duration: 750, easing: 'linear(0,0.007,0.029 2.2%,0.118 4.7%,0.625 15.3%,0.826 20.7%,0.902 24%,0.951 27.3%,0.979 30.7%,0.991 34%,0.998 40%,1)' }}
-              spinTiming={{ duration: 750, easing: 'linear(0,0.007,0.029 2.2%,0.118 4.7%,0.625 15.3%,0.826 20.7%,0.902 24%,0.951 27.3%,0.979 30.7%,0.991 34%,0.998 40%,1)' }}
-              opacityTiming={{ duration: 350, easing: 'ease-out' }}
+              transformTiming={{ duration: 2000, easing: 'linear(0,0.007,0.029 2.2%,0.118 4.7%,0.625 15.3%,0.826 20.7%,0.902 24%,0.951 27.3%,0.979 30.7%,0.991 34%,0.998 40%,1)' }}
+              spinTiming={{ duration: 2000, easing: 'linear(0,0.007,0.029 2.2%,0.118 4.7%,0.625 15.3%,0.826 20.7%,0.902 24%,0.951 27.3%,0.979 30.7%,0.991 34%,0.998 40%,1)' }}
+              opacityTiming={{ duration: 500, easing: 'ease-out' }}
               style={{
                 fontSize: textStyles['Heading/Hero'].fontSize,
                 fontWeight: textStyles['Heading/Hero'].fontWeight,
