@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState, useRef, useEffect } from 'react';
+import NumberFlow from '@number-flow/react';
 import { colors, spacing, textStyles, radius } from '../theme/tokens';
 
 const STYLE_ID = 'bc-keyframes';
@@ -27,7 +28,6 @@ interface Props { title?: string; value?: string; sign?: string; amount?: string
 
 function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+', amount = 'R$ 392' }: Props) {
   const [phase, setPhase] = useState<'skeleton' | 'bg-in' | 'texts-in'>('skeleton');
-  const [displayValue, setDisplayValue] = useState('');
   const [animKey, setAnimKey] = useState(0);
   const loadedRef = useRef(false);
   const startRef  = useRef(Date.now());
@@ -54,28 +54,14 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
     return () => clearTimeout(t);
   }, [phase]);
 
-  // Count-up animation
-  useEffect(() => {
-    if (phase !== 'texts-in') return;
+  // Parse value for NumberFlow
+  const parsedValue = (() => {
     const match = value.match(/^([^0-9]*)([0-9][0-9.,]*)$/);
-    if (!match) { setDisplayValue(value); return; }
-    const prefix = match[1];
-    const numStr  = match[2];
-    const sep     = numStr.includes('.') ? '.' : ',';
-    const numeric = parseFloat(numStr.replace(/\./g, '').replace(',', '.'));
-    const DURATION = 1400;
-    const start = Date.now();
-    let raf: number;
-    const tick = () => {
-      const p = Math.min((Date.now() - start) / DURATION, 1);
-      const eased = p === 1 ? 1 : 1 - Math.pow(2, -10 * p);
-      const cur = Math.round(eased * numeric);
-      setDisplayValue(prefix + cur.toString().replace(/\B(?=(\d{3})+(?!\d))/g, sep));
-      if (p < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [phase, value]);
+    if (!match) return 0;
+    return parseFloat(match[2].replace(/\./g, '').replace(',', '.'));
+  })();
+  const prefix = value.match(/^([^0-9]*)/)?.[1] ?? '';
+  const sep = value.includes('.') && !value.includes(',') ? '.' : ',';
 
   const showBg    = phase === 'bg-in' || phase === 'texts-in';
   const showTexts = phase === 'texts-in';
@@ -95,7 +81,23 @@ function BalanceCard({ title = 'Balanço do mês', value = 'R$ 8.982', sign = '+
         <div style={{ position: 'absolute', left: spacing[16], top: spacing[16], width: 203, height: 175, display: 'flex', flexDirection: 'column', justifyContent: 'flex-start', gap: 64, zIndex: 5 }}>
           <span style={{ fontSize: textStyles['Heading/H3'].fontSize, fontWeight: textStyles['Heading/H3'].fontWeight, color: colors['neutral/text-muted'], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 0ms both' : 'none' }}>{title}</span>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontSize: textStyles['Heading/Hero'].fontSize, fontWeight: textStyles['Heading/Hero'].fontWeight, letterSpacing: textStyles['Heading/Hero'].letterSpacing, color: colors['surface/on-dark'], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none' }}>{displayValue}</span>
+            <NumberFlow
+              value={showTexts ? parsedValue : 0}
+              prefix={prefix}
+              locales="pt-BR"
+              transformTiming={{ duration: 1400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+              spinTiming={{ duration: 1400, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+              opacityTiming={{ duration: 400, easing: 'ease-out' }}
+              style={{
+                fontSize: textStyles['Heading/Hero'].fontSize,
+                fontWeight: textStyles['Heading/Hero'].fontWeight,
+                letterSpacing: textStyles['Heading/Hero'].letterSpacing,
+                color: colors['surface/on-dark'],
+                opacity: showTexts ? 1 : 0,
+                animation: showTexts ? 'bcFadeSlide 0.5s ease-out 150ms both' : 'none',
+                lineHeight: 1,
+              }}
+            />
             <div style={{ display: 'flex', gap: spacing[4], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFadeSlide 0.5s ease-out 300ms both' : 'none' }}>
               <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{sign}</span>
               <span style={{ fontSize: textStyles['Body/Comparison'].fontSize, fontWeight: textStyles['Body/Comparison'].fontWeight, color: colors['feedback/positive'] }}>{amount}</span>
