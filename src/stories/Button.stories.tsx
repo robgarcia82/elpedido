@@ -1,91 +1,95 @@
+/**
+ * Button — DS El Pedido
+ * Figma: aE63DfO5z6PKevs0791B9q, node 1:817
+ *
+ * Props (mirrors Figma exactly):
+ *   tertiary: "Primary" | "Secondary"
+ *   state:    "Default" | "Pressed" | "Disabled"
+ *   size:     "High" | "Medium" | "Small"
+ *   label, showLeadingIcon, showTrailingIcon
+ */
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { colors, spacing, radius } from '../theme/tokens';
+import { colors, radius } from '../theme/tokens';
 
-// ── Icon (Search) ─────────────────────────────────────────────
-const SearchIcon = ({ size = 20, color = '#fff' }) => (
-  <svg width={size} height={size} viewBox="0 0 16 16" fill={color}>
-    <path d="M9.8 9.8C10.73 8.87 11.2 7.73 11.2 6.4 11.2 5.07 10.73 3.93 9.8 3 8.87 2.07 7.73 1.6 6.4 1.6 5.07 1.6 3.93 2.07 3 3 2.07 3.93 1.6 5.07 1.6 6.4 1.6 7.73 2.07 8.87 3 9.8 3.93 10.73 5.07 11.2 6.4 11.2 7.73 11.2 8.87 10.73 9.8 9.8ZM6.4 12.8C4.61 12.8 3.1 12.18 1.86 10.94.62 9.7 0 8.19 0 6.4 0 4.61.62 3.1 1.86 1.86 3.1.62 4.61 0 6.4 0 8.19 0 9.7.62 10.94 1.86 12.18 3.1 12.8 4.61 12.8 6.4 12.8 7.15 12.68 7.85 12.45 8.51 12.22 9.17 11.89 9.77 11.46 10.32L16 14.88 14.88 16 10.32 11.46C9.77 11.89 9.17 12.22 8.51 12.45 7.85 12.68 7.15 12.8 6.4 12.8Z"/>
-  </svg>
+// ── Icon placeholder (Search) — matches Figma leading/trailing icon slot ──
+const SearchIcon = ({ size }: { size: number }) => (
+  <div style={{ width: size, height: size, flexShrink: 0, overflow: 'hidden', position: 'relative' }}>
+    <svg width={size} height={size} viewBox="0 0 16 16"
+      fill={colors['surface/on-dark']}
+      style={{ position: 'absolute', inset: '16.67%', width: '66.66%', height: '66.66%' }}>
+      <path d="M9.8 9.8C10.73 8.87 11.2 7.73 11.2 6.4 11.2 5.07 10.73 3.93 9.8 3 8.87 2.07 7.73 1.6 6.4 1.6 5.07 1.6 3.93 2.07 3 3 2.07 3.93 1.6 5.07 1.6 6.4 1.6 7.73 2.07 8.87 3 9.8 3.93 10.73 5.07 11.2 6.4 11.2 7.73 11.2 8.87 10.73 9.8 9.8ZM6.4 12.8C4.61 12.8 3.1 12.18 1.86 10.94.62 9.7 0 8.19 0 6.4 0 4.61.62 3.1 1.86 1.86 3.1.62 4.61 0 6.4 0 8.19 0 9.7.62 10.94 1.86 12.18 3.1 12.8 4.61 12.8 6.4 12.8 7.15 12.68 7.85 12.45 8.51 12.22 9.17 11.89 9.77 11.46 10.32L16 14.88 14.88 16 10.32 11.46C9.77 11.89 9.17 12.22 8.51 12.45 7.85 12.68 7.15 12.8 6.4 12.8Z"/>
+    </svg>
+  </div>
 );
 
-// ── Token config — mirrors Figma DS node 1:817 exactly ────────
-//
-// Variants: Primary | Secondary          (no Ghost)
-// States:   Default | Pressed | Disabled (no Loading)
-// Sizes:    High (px=20) | Medium (h=48, w=158) | Small (h=32, w=123)
-//
-// Secondary Default bg = rgba(161,161,161,0.25) fill (button/secondary-border token as fill — no CSS border)
-// Secondary Disabled High/Medium = #373737 (palette/gray-700), opacity 40%
-// Secondary Disabled Small       = rgba(161,161,161,0.25) (button/secondary-border), opacity 40%
-
-const SECONDARY_BORDER_BG = 'rgba(161,161,161,0.25)'; // button/secondary-border token as bg fill
-
-const SIZES = {
-  high:   { h: 56,  px: 20, fontSize: 18, lineHeight: '24px', iconSize: 24, fixedWidth: undefined },
-  medium: { h: 48,  px: 16, fontSize: 16, lineHeight: '24px', iconSize: 20, fixedWidth: 158       },
-  small:  { h: 32,  px: 12, fontSize: 12, lineHeight: '16px', iconSize: 16, fixedWidth: 123       },
-} as const;
-
-type Variant = 'primary' | 'secondary';
-type Size    = keyof typeof SIZES;
-type State   = 'default' | 'pressed' | 'disabled';
-
-function getBg(variant: Variant, state: State, size: Size): string {
-  if (variant === 'primary') {
-    if (state === 'pressed') return '#1E2B8A';          // button/primary-bg-pressed
-    return colors['brand/primary'];                     // button/primary-bg
+// ── Exact specs extracted from Figma node 1:817 ────────────────
+// bg resolved per: tertiary × state × size
+function getBg(tertiary: 'Primary' | 'Secondary', state: 'Default' | 'Pressed' | 'Disabled', size: 'High' | 'Medium' | 'Small'): string {
+  if (tertiary === 'Primary') {
+    if (state === 'Pressed')  return '#1e2b8a'; // button/primary-bg-pressed
+    return '#2b3bb3';                           // button/primary-bg (Default + Disabled)
   }
-  // secondary
-  if (state === 'pressed')  return colors['neutral/surface-elevated'];  // button/secondary-bg-pressed (#282828)
-  if (state === 'disabled') return size === 'small' ? SECONDARY_BORDER_BG : '#373737'; // palette/gray-700 (High/Med)
-  return SECONDARY_BORDER_BG;                           // default: semi-transparent fill, no CSS border
+  // Secondary
+  if (state === 'Pressed') return '#282828';                  // button/secondary-bg-pressed
+  if (state === 'Disabled' && size !== 'Small') return '#373737'; // palette/gray-700 (High + Medium only)
+  return 'rgba(161,161,161,0.25)';                            // button/secondary-border (Default, Small Disabled)
 }
 
-// ── Button ────────────────────────────────────────────────────
+// size → exact padding, width, font per Figma
+const SIZE_STYLES: Record<'High' | 'Medium' | 'Small', React.CSSProperties> = {
+  High:   { padding: '16px 20px',   fontSize: 18, lineHeight: '24px'                   },
+  Medium: { padding: '14px 16px',   fontSize: 16, lineHeight: '24px', width: 158, height: 48 },
+  Small:  { padding: '8px 12px',    fontSize: 12, lineHeight: '16px', width: 123        },
+};
+
+const ICON_SIZE: Record<'High' | 'Medium' | 'Small', number> = {
+  High: 24, Medium: 20, Small: 16,
+};
+
+// ── Button component — props match Figma 1:1 ─────────────────
 interface ButtonProps {
+  tertiary?:        'Primary' | 'Secondary';
+  state?:           'Default' | 'Pressed' | 'Disabled';
+  size?:            'High' | 'Medium' | 'Small';
   label?:           string;
-  variant?:         Variant;
-  state?:           State;
-  size?:            Size;
   showLeadingIcon?: boolean;
+  showTrailingIcon?:boolean;
 }
 
 function Button({
+  tertiary        = 'Primary',
+  state           = 'Default',
+  size            = 'High',
   label           = 'Novo pedido',
-  variant         = 'primary',
-  state           = 'default',
-  size            = 'high',
   showLeadingIcon = false,
+  showTrailingIcon= false,
 }: ButtonProps) {
-  const s = SIZES[size];
+  const iconSize = ICON_SIZE[size];
+
   return (
-    <button style={{
-      height:          s.h,
-      paddingLeft:     s.px,
-      paddingRight:    s.px,
-      width:           s.fixedWidth,
-      borderRadius:    radius.full,
-      backgroundColor: getBg(variant, state, size),
-      border:          'none',
-      color:           colors['surface/on-dark'],
-      fontSize:        s.fontSize,
-      lineHeight:      s.lineHeight,
-      fontWeight:      500,
-      fontFamily:      'Geist, system-ui, sans-serif',
-      cursor:          state === 'disabled' ? 'not-allowed' : 'pointer',
-      opacity:         state === 'disabled' ? 0.4 : 1,
+    <div style={{
       display:         'inline-flex',
       alignItems:      'center',
-      justifyContent:  'space-between',
-      gap:             spacing[8],
-      transition:      'background 0.15s',
+      justifyContent:  'space-between', // justify-between — matches Figma
+      borderRadius:    radius.full,     // var(--button/radius, 100px)
+      backgroundColor: getBg(tertiary, state, size),
+      opacity:         state === 'Disabled' ? 0.4 : 1,
+      cursor:          state === 'Disabled' ? 'not-allowed' : 'pointer',
+      fontFamily:      'Geist, system-ui, sans-serif',
+      fontWeight:      500,
+      color:           colors['surface/on-dark'], // button/primary-text | secondary-text (both white)
       whiteSpace:      'nowrap',
       boxSizing:       'border-box' as const,
+      gap:             8,
+      ...SIZE_STYLES[size],
     }}>
-      {showLeadingIcon && <SearchIcon size={s.iconSize} color={colors['surface/on-dark']} />}
-      {label}
-    </button>
+      {showLeadingIcon  && <SearchIcon size={iconSize} />}
+      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500 }}>
+        {label}
+      </span>
+      {showTrailingIcon && <SearchIcon size={iconSize} />}
+    </div>
   );
 }
 
@@ -98,16 +102,15 @@ const meta: Meta = {
       description: {
         component: `Action button — DS El Pedido (Figma node \`1:817\`).
 
-**Variants:** Primary · Secondary
-**States:** Default · Pressed · Disabled
-**Sizes:** High (56px, px=20) · Medium (48px, w=158px) · Small (32px, w=123px)
+Props (mirrors Figma exactly):
+- \`tertiary\`: Primary | Secondary
+- \`state\`: Default | Pressed | Disabled
+- \`size\`: High | Medium | Small
+- \`label\`, \`showLeadingIcon\`, \`showTrailingIcon\`
 
-Key tokens:
-- \`button/primary-bg\` → brand/primary (#2B3BB3)
-- \`button/primary-bg-pressed\` (#1E2B8A)
-- \`button/secondary-border\` → rgba(161,161,161,0.25) used as fill (no CSS border)
-- \`button/secondary-bg-pressed\` → #282828
-- Secondary Disabled (High/Medium): \`palette/gray-700\` (#373737), opacity 40%`,
+**High**: px=20 py=16, auto width, 18px  
+**Medium**: px=16 py=14, w=158px h=48px, 16px  
+**Small**: px=12 py=8, w=123px, 12px`,
       },
     },
   },
@@ -120,19 +123,18 @@ export const AllVariants: StoryObj = {
   name: 'All variants',
   render: () => (
     <div style={{ fontFamily: 'Geist, system-ui, sans-serif', display: 'flex', flexDirection: 'column', gap: 40 }}>
-      {(['high', 'medium', 'small'] as Size[]).map(size => (
+      {(['High', 'Medium', 'Small'] as const).map(size => (
         <div key={size}>
           <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 16 }}>
-            size={size} — h:{SIZES[size].h}px · px:{SIZES[size].px}px
-            {SIZES[size].fixedWidth ? ` · w:${SIZES[size].fixedWidth}px (fixed)` : ' · width:auto'}
+            size={size}
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center' }}>
-            {(['primary', 'secondary'] as Variant[]).map(variant =>
-              (['default', 'pressed', 'disabled'] as State[]).map(state => (
-                <div key={`${variant}-${state}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-                  <Button label="Novo pedido" variant={variant} state={state} size={size} />
+            {(['Primary', 'Secondary'] as const).map(tertiary =>
+              (['Default', 'Pressed', 'Disabled'] as const).map(state => (
+                <div key={`${tertiary}-${state}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                  <Button tertiary={tertiary} state={state} size={size} />
                   <span style={{ fontSize: 9, color: colors['neutral/text-tertiary'], fontFamily: 'monospace', textAlign: 'center' }}>
-                    {variant}<br/>{state}
+                    {tertiary}<br/>{state}
                   </span>
                 </div>
               ))
@@ -148,10 +150,10 @@ export const Primary: StoryObj = {
   name: 'Primary',
   render: () => (
     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-      {(['default', 'pressed', 'disabled'] as State[]).map(s => (
-        <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <Button label="Salvar" variant="primary" state={s} />
-          <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'], fontFamily: 'monospace' }}>{s}</span>
+      {(['Default', 'Pressed', 'Disabled'] as const).map(state => (
+        <div key={state} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <Button tertiary="Primary" state={state} label="Salvar" />
+          <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'], fontFamily: 'monospace' }}>{state}</span>
         </div>
       ))}
     </div>
@@ -162,10 +164,10 @@ export const Secondary: StoryObj = {
   name: 'Secondary',
   render: () => (
     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-      {(['default', 'pressed', 'disabled'] as State[]).map(s => (
-        <div key={s} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-          <Button label="Cancelar" variant="secondary" state={s} />
-          <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'], fontFamily: 'monospace' }}>{s}</span>
+      {(['Default', 'Pressed', 'Disabled'] as const).map(state => (
+        <div key={state} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+          <Button tertiary="Secondary" state={state} label="Cancelar" />
+          <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'], fontFamily: 'monospace' }}>{state}</span>
         </div>
       ))}
     </div>
@@ -175,12 +177,12 @@ export const Secondary: StoryObj = {
 export const Sizes: StoryObj = {
   name: 'Sizes',
   render: () => (
-    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-      {(['high', 'medium', 'small'] as Size[]).map(size => (
+    <div style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+      {(['High', 'Medium', 'Small'] as const).map(size => (
         <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <Button label="Novo pedido" size={size} />
+          <Button size={size} />
           <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'], fontFamily: 'Geist, sans-serif' }}>
-            {size} — {SIZES[size].h}px{SIZES[size].fixedWidth ? ` × ${SIZES[size].fixedWidth}px` : ''}
+            {size}
           </span>
         </div>
       ))}
@@ -188,29 +190,35 @@ export const Sizes: StoryObj = {
   ),
 };
 
-export const WithLeadingIcon: StoryObj = {
-  name: 'With leading icon',
+export const WithIcons: StoryObj = {
+  name: 'With leading + trailing icon',
   render: () => (
-    <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-      <Button label="Buscar" variant="primary"   size="high"   showLeadingIcon />
-      <Button label="Buscar" variant="secondary" size="high"   showLeadingIcon />
-      <Button label="Buscar" variant="primary"   size="medium" showLeadingIcon />
-      <Button label="Buscar" variant="primary"   size="small"  showLeadingIcon />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {(['High', 'Medium', 'Small'] as const).map(size => (
+        <div key={size} style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <Button size={size} tertiary="Primary"   label="Buscar" showLeadingIcon />
+          <Button size={size} tertiary="Secondary" label="Buscar" showLeadingIcon />
+          <Button size={size} tertiary="Primary"   label="Próximo" showTrailingIcon />
+        </div>
+      ))}
     </div>
   ),
 };
 
 export const SecondaryDisabledBg: StoryObj = {
-  name: 'Secondary disabled — bg by size',
+  name: 'Secondary Disabled — bg by size',
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, fontFamily: 'Geist, system-ui, sans-serif' }}>
-      <div style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase' }}>
-        High/Medium → #373737 (palette/gray-700) · Small → rgba(161,161,161,0.25)
-      </div>
+      <span style={{ color: colors['neutral/text-muted'], fontSize: 11, letterSpacing: 1, textTransform: 'uppercase' }}>
+        High + Medium → #373737 (palette/gray-700) · Small → rgba(161,161,161,0.25)
+      </span>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-        <Button label="Disabled" variant="secondary" state="disabled" size="high"   />
-        <Button label="Disabled" variant="secondary" state="disabled" size="medium" />
-        <Button label="Disabled" variant="secondary" state="disabled" size="small"  />
+        {(['High', 'Medium', 'Small'] as const).map(size => (
+          <div key={size} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <Button tertiary="Secondary" state="Disabled" size={size} label="Disabled" />
+            <span style={{ fontSize: 10, color: colors['neutral/text-tertiary'], fontFamily: 'monospace' }}>{size}</span>
+          </div>
+        ))}
       </div>
     </div>
   ),
