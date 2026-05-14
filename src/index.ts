@@ -23,3 +23,6 @@ export type { SegmentProps } from './components/Segment';
 -e 
 export { AvatarPhoto } from './components/AvatarPhoto';
 export type { AvatarPhotoProps } from './components/AvatarPhoto';
+-e 
+export { CustomerAvatar } from './components/CustomerAvatar';
+export type { CustomerAvatarProps } from './components/CustomerAvatar';
