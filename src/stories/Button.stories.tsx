@@ -32,16 +32,18 @@ type Size    = keyof typeof SIZES;
 type State   = 'default' | 'pressed' | 'disabled' | 'loading';
 
 // Per-variant + per-state background resolution (matches Figma node 1:817)
+// button/secondary-border token = rgba(161,161,161,0.25) — used as BG fill, not a CSS border
+const SECONDARY_BORDER_BG = 'rgba(161,161,161,0.25)'; // button/secondary-border
+
 function getBg(variant: Variant, state: State, size: Size): string {
   if (variant === 'primary') {
     if (state === 'pressed' || state === 'loading') return '#1E2B8A'; // button/primary-bg-pressed
     return colors['brand/primary'];                                    // button/primary-bg
   }
   if (variant === 'secondary') {
-    if (state === 'pressed') return colors['neutral/surface-elevated']; // button/secondary-bg-pressed
-    // Disabled: High/Medium use palette/gray-700 (#373737), Small uses button/secondary-border
-    if (state === 'disabled') return size === 'small' ? colors['neutral/border'] : '#373737';
-    return 'transparent';
+    if (state === 'pressed')  return colors['neutral/surface-elevated']; // button/secondary-bg-pressed (#282828)
+    if (state === 'disabled') return size === 'small' ? SECONDARY_BORDER_BG : '#373737'; // palette/gray-700 (High/Med) | secondary-border (Small)
+    return SECONDARY_BORDER_BG; // button/secondary-border — semi-transparent fill, no CSS border
   }
   // Ghost
   if (state === 'pressed' || state === 'disabled') return colors['neutral/surface-elevated'];
@@ -53,13 +55,7 @@ function getTextColor(variant: Variant): string {
   return colors['surface/on-dark'];                        // button/primary-text | secondary-text
 }
 
-function getBorder(variant: Variant, state: State): string {
-  // Secondary default: render border. Disabled secondary has filled bg (no border needed).
-  if (variant === 'secondary' && state === 'default') {
-    return `1px solid ${colors['neutral/border']}`; // button/secondary-border
-  }
-  return 'none';
-}
+
 
 // ── Button component ──────────────────────────────────────────
 interface ButtonProps {
@@ -91,7 +87,7 @@ function Button({
       minWidth:        s.fixedWidth ? undefined : 'auto',
       borderRadius:    radius.full,
       backgroundColor: getBg(variant, state, size),
-      border:          getBorder(variant, state),
+      border:          'none',
       color:           textColor,
       fontSize:        s.fontSize,
       lineHeight:      s.lineHeight,
@@ -101,7 +97,7 @@ function Button({
       opacity:         isDisabled ? 0.4 : 1,
       display:         'inline-flex',
       alignItems:      'center',
-      justifyContent:  'center',
+      justifyContent:  'space-between',
       gap:             spacing[8],
       transition:      'background 0.15s',
       whiteSpace:      'nowrap',
