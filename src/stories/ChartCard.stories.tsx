@@ -38,7 +38,7 @@ export default meta;
 export const Default: StoryObj = {
   args: { title: 'Vendas em Abril' },
   render: (args) => (
-    <div style={{ width: 361 }}>
+    <div style={{ width: 360 }}>
       <ChartCard {...args} />
     </div>
   ),
@@ -48,7 +48,7 @@ export const CustomTitle: StoryObj = {
   name: 'Custom title',
   args: { title: 'Pedidos em Maio' },
   render: (args) => (
-    <div style={{ width: 361 }}>
+    <div style={{ width: 360 }}>
       <ChartCard {...args} />
     </div>
   ),
