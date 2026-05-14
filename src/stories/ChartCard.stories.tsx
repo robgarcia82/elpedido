@@ -10,14 +10,14 @@ const AXIS = [{ label: '08:00', x: 8 }, { label: '12:00', x: 99 }, { label: '16:
 
 function ChartCard({ title = 'Vendas em Abril' }: { title?: string }) {
   return (
-    <div style={{ width: 361, backgroundColor: colors['neutral/background'], borderRadius: radius.md, paddingTop: spacing[24], paddingLeft: spacing[24], paddingRight: spacing[24], paddingBottom: spacing[16], fontFamily: 'Geist, system-ui, sans-serif' }}>
+    <div style={{ width: '100%', backgroundColor: colors['neutral/background'], borderRadius: radius.md, paddingTop: spacing[24], paddingLeft: spacing[24], paddingRight: spacing[24], paddingBottom: spacing[16], fontFamily: 'Geist, system-ui, sans-serif', boxSizing: 'border-box' as const }}>
       <div style={{ marginBottom: spacing[16] }}>
         <span style={{ fontSize: textStyles['Heading/H3'].fontSize, fontWeight: textStyles['Heading/H3'].fontWeight, color: colors['surface/on-dark'] }}>{title}</span>
       </div>
-      <div style={{ position: 'relative', width: 313, height: 298 }}>
+      <div style={{ position: 'relative', width: '100%', height: 298 }}>
         {/* Grid lines */}
         {GRID_Y.map((y, i) => (
-          <div key={i} style={{ position: 'absolute', left: 0, top: 33 + y, width: 313, height: 1, backgroundColor: 'rgba(66,66,66,0.5)' }} />
+          <div key={i} style={{ position: 'absolute', left: 0, top: 33 + y, right: 0, height: 1, backgroundColor: 'rgba(66,66,66,0.5)' }} />
         ))}
         {/* Bars */}
         {BAR_DATA.map(([x, h], i) => (
@@ -35,5 +35,39 @@ function ChartCard({ title = 'Vendas em Abril' }: { title?: string }) {
 const meta: Meta = { title: 'Components/ChartCard', parameters: { backgrounds: { default: 'dark' } }, argTypes: { title: { control: 'text' } } };
 export default meta;
 
-export const Default: StoryObj = { args: { title: 'Vendas em Abril' }, render: (args) => <ChartCard {...args} /> };
-export const CustomTitle: StoryObj = { name: 'Custom title', args: { title: 'Pedidos em Maio' }, render: (args) => <ChartCard {...args} /> };
+export const Default: StoryObj = {
+  args: { title: 'Vendas em Abril' },
+  render: (args) => (
+    <div style={{ width: 361 }}>
+      <ChartCard {...args} />
+    </div>
+  ),
+};
+
+export const CustomTitle: StoryObj = {
+  name: 'Custom title',
+  args: { title: 'Pedidos em Maio' },
+  render: (args) => (
+    <div style={{ width: 361 }}>
+      <ChartCard {...args} />
+    </div>
+  ),
+};
+
+export const Narrow: StoryObj = {
+  name: 'Narrow (fill container)',
+  render: (args) => (
+    <div style={{ width: 280 }}>
+      <ChartCard title="Pedidos hoje" />
+    </div>
+  ),
+};
+
+export const Wide: StoryObj = {
+  name: 'Wide (fill container)',
+  render: (args) => (
+    <div style={{ width: 480 }}>
+      <ChartCard title="Faturamento mensal" />
+    </div>
+  ),
+};
