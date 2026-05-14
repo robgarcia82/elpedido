@@ -20,3 +20,6 @@ export type { TopbarProps } from './components/Topbar';
 -e 
 export { Segment } from './components/Segment';
 export type { SegmentProps } from './components/Segment';
+-e 
+export { AvatarPhoto } from './components/AvatarPhoto';
+export type { AvatarPhotoProps } from './components/AvatarPhoto';
