@@ -42,56 +42,63 @@ function OrderCard({
       boxSizing: 'border-box',
       flexShrink: 0,
     }}>
-      {/* content — flex items-center justify-between w-full (Figma: 6:417) */}
+      {/* content row — align-items:center distributes all groups centered vertically */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        overflow: 'hidden', width: '100%', flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%',
       }}>
 
-        {/* left — flex gap-16 items-center justify-center shrink-0 */}
+        {/* left — avatar/date + product list, centered relative to each other */}
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          gap: 16, overflow: 'hidden', flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 16,
+          flexShrink: 0,
         }}>
-
           {/* Default: CustomerAvatar (node 1:626) */}
           {isDefault && (
             <CustomerAvatar name={customer.name} phone={customer.phone} />
           )}
 
-          {/* Homecard: Date + Day */}
+          {/* Homecard: Date + Day — natural height, centered by parent */}
           {isHomecard && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', flexShrink: 0, alignSelf: 'stretch' }}>
-              <div style={{ width: 91, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
-                <span style={{ fontSize: 18, fontWeight: 500, lineHeight: '24px', color: colors['surface/on-dark'], fontFamily: 'Geist, system-ui, sans-serif', textAlign: 'center', whiteSpace: 'nowrap' }}>
-                  {date}
-                </span>
-                <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '16px', color: colors['surface/on-dark'], fontFamily: 'Geist, system-ui, sans-serif', textAlign: 'center', whiteSpace: 'nowrap' }}>
-                  {day}
-                </span>
-              </div>
+            <div style={{
+              width: 91,
+              display: 'flex', flexDirection: 'column',
+              alignItems: 'center', justifyContent: 'center',
+              gap: 12, flexShrink: 0,
+            }}>
+              <span style={{ fontSize: 18, fontWeight: 500, lineHeight: '24px', color: colors['surface/on-dark'], fontFamily: 'Geist, system-ui, sans-serif', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                {date}
+              </span>
+              <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '16px', color: colors['surface/on-dark'], fontFamily: 'Geist, system-ui, sans-serif', textAlign: 'center', whiteSpace: 'nowrap' }}>
+                {day}
+              </span>
             </div>
           )}
 
-          {/* product-list — 5× OrderItem (node 1:639 → QuantityBadge 1:632) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, alignSelf: 'stretch' }}>
+          {/* product-list — natural height, centered by parent alignItems:center */}
+          <div style={{
+            display: 'flex', flexDirection: 'column',
+            gap: 4, alignItems: 'flex-start',
+            flexShrink: 0,
+          }}>
             {products.map((p, i) => <OrderItem key={i} qty={p.qty} name={p.name} />)}
           </div>
         </div>
 
-        {/* action-stack — flex-col gap-8 items-end shrink-0 */}
+        {/* action-stack — centered by content row alignItems:center */}
         {isDefault && (
           <div style={{
             display: 'flex', flexDirection: 'column',
             gap: 8, alignItems: 'flex-end',
             flexShrink: 0,
           }}>
-            {/* Button (node 1:817) — Primary, Small, hug width */}
-            <Button tertiary="Primary" size="Small" label="Próximo" autoWidth />
-            {/* Button (node 1:817) — Secondary, Small, w=70px */}
-            <Button tertiary="Secondary" size="Small" label="Editar" width={70} />
-            {/* Button (node 1:817) — Secondary, Small, w=70px */}
-            <Button tertiary="Secondary" size="Small" label="+ item" width={70} />
+            <Button tertiary="Primary"   size="Small" label="Próximo" autoWidth />
+            <Button tertiary="Secondary" size="Small" label="Editar"  width={70} />
+            <Button tertiary="Secondary" size="Small" label="+ item"  width={70} />
           </div>
         )}
       </div>
