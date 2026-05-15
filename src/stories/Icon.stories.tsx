@@ -45,14 +45,8 @@ type IconSize = 16 | 24;
 
 // ── Icon component — renders exact Figma assets ───────────────
 function Icon({ type, size = 24 }: { type: IconType; size?: IconSize }) {
-  const key = `${type.replace(/ /g, '')}_${size}` as keyof typeof ASSETS;
-  const src = ASSETS[key];
-
-  if (!src) return (
-    <div style={{ width: size, height: size, borderRadius: 4, backgroundColor: colors['neutral/border'], opacity: 0.3, flexShrink: 0 }} />
-  );
-
-  // ArrowLeft — inline SVG (permanent, no expiry)
+  // ── Inline SVG icons first — before any asset lookup ─────────
+  // (asset keys use different casing so these must be handled before key lookup)
   if (type === 'Arrow left') {
     return (
       <svg width={size} height={size} viewBox="0 0 24 24" style={{ flexShrink: 0, display: 'block' }}>
@@ -62,7 +56,6 @@ function Icon({ type, size = 24 }: { type: IconType; size?: IconSize }) {
     );
   }
 
-  // Chevron down — inline SVG (permanent, no expiry)
   if (type === 'Chevron down') {
     return (
       <svg width={size} height={size} viewBox="0 0 24 24" style={{ flexShrink: 0, display: 'block' }}>
@@ -70,6 +63,14 @@ function Icon({ type, size = 24 }: { type: IconType; size?: IconSize }) {
       </svg>
     );
   }
+
+  // ── Remote asset icons ────────────────────────────────────────
+  const key = `${type.replace(/ /g, '')}_${size}` as keyof typeof ASSETS;
+  const src = ASSETS[key];
+
+  if (!src) return (
+    <div style={{ width: size, height: size, borderRadius: 4, backgroundColor: colors['neutral/border'], opacity: 0.3, flexShrink: 0 }} />
+  );
 
   return (
     <div style={{ width: size, height: size, position: 'relative', flexShrink: 0 }}>
