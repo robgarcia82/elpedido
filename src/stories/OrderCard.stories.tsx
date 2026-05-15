@@ -61,7 +61,7 @@ function OrderCard({
 
           {/* Homecard: Date + Day */}
           {isHomecard && (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', flexShrink: 0, alignSelf: 'stretch' }}>
               <div style={{ width: 91, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
                 <span style={{ fontSize: 18, fontWeight: 500, lineHeight: '24px', color: colors['surface/on-dark'], fontFamily: 'Geist, system-ui, sans-serif', textAlign: 'center', whiteSpace: 'nowrap' }}>
                   {date}
