@@ -48,9 +48,9 @@ function OrderCard({
         overflow: 'hidden', width: '100%', flexShrink: 0,
       }}>
 
-        {/* left — flex gap-16 items-start justify-center shrink-0 (Figma: 6:418) */}
+        {/* left — flex gap-16 items-center justify-center shrink-0 */}
         <div style={{
-          display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
           gap: 16, overflow: 'hidden', flexShrink: 0,
         }}>
 
