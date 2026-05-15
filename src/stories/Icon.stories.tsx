@@ -55,9 +55,9 @@ function Icon({ type, size = 24 }: { type: IconType; size?: IconSize }) {
   // ArrowLeft — inline SVG (permanent, no expiry)
   if (type === 'Arrow left') {
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-        <path d="M19 12H5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M12 5L5 12L12 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: 'block' }}>
+        <path d="M19 12H5"/>
+        <path d="M12 5L5 12L12 19"/>
       </svg>
     );
   }
@@ -65,8 +65,8 @@ function Icon({ type, size = 24 }: { type: IconType; size?: IconSize }) {
   // Chevron down — inline SVG (permanent, no expiry)
   if (type === 'Chevron down') {
     return (
-      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-        <path d="M6 9L12 15L18 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, display: 'block' }}>
+        <path d="M6 9L12 15L18 9"/>
       </svg>
     );
   }
