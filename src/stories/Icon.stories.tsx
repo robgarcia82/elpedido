@@ -6,7 +6,7 @@ import { colors } from '../theme/tokens';
 const ASSETS = {
   // size=24
   Favoritos_24:        'https://www.figma.com/api/mcp/asset/9c8d2e48-f73f-4343-bea1-7b903eb8db42',
-  ArrowLeft_24:        { v1: 'https://www.figma.com/api/mcp/asset/1aab6440-4bf7-4b3d-b45f-0649c32d76ac', v2: 'https://www.figma.com/api/mcp/asset/78832845-0cd0-4b17-aafa-6ef24b4c8e99' },
+  // ArrowLeft: inline SVG (no expiry)
   Entradas_24:         'https://www.figma.com/api/mcp/asset/b95ebf6a-e6c7-4ca5-b438-7b41d9ee47a8',
   Bebidas_24:          'https://www.figma.com/api/mcp/asset/6c7983dc-aa23-4ae0-aa13-285e71dd2cfc',
   Sobremesa_24:        'https://www.figma.com/api/mcp/asset/35bf68d0-515c-49cd-96b3-3efd29060e9a',
@@ -18,18 +18,18 @@ const ASSETS = {
   Pedidos_24:          'https://www.figma.com/api/mcp/asset/ac8a7888-5d0e-4997-96b1-d62233d831c2',
   Estoque_24:          'https://www.figma.com/api/mcp/asset/9c0e4a7c-fb5b-4d2a-9c14-492b5aab6842',
   Insights_24:         'https://www.figma.com/api/mcp/asset/64a98922-0c88-4c89-8fec-8b5362366ed6',
-  ChevronDown_24:      'https://www.figma.com/api/mcp/asset/03e9a1b4-e48a-4334-a564-509e955d3e66',
+  // ChevronDown: inline SVG (no expiry)
   Check_24:            'https://www.figma.com/api/mcp/asset/d66c4f86-bc57-4cbd-835a-fe12baf3d5fa',
   // size=16
   Favoritos_16:        'https://www.figma.com/api/mcp/asset/7f40e67e-f989-4629-93db-34ffdb759ac0',
-  ArrowLeft_16:        { v1: 'https://www.figma.com/api/mcp/asset/a2473a6a-ef5a-4a16-95cd-ee9f10f6b10f', v2: 'https://www.figma.com/api/mcp/asset/f05905aa-056c-4166-8bc8-96875fa1be84' },
+
   Search_16:           'https://www.figma.com/api/mcp/asset/2a1e9fc0-95e1-4e36-a23e-401f155b5888',
   Home_16:             'https://www.figma.com/api/mcp/asset/714248af-ad5f-432e-9fec-893c78f91078',
   Clientes_16:         'https://www.figma.com/api/mcp/asset/e809b571-bffe-4945-839b-ad73c9ef9b7b',
   Pedidos_16:          'https://www.figma.com/api/mcp/asset/8d16a5d3-2dfa-4957-a608-78a7c07b68cc',
   Estoque_16:          'https://www.figma.com/api/mcp/asset/ab284778-b51d-406f-a279-34a53d0957c5',
   Insights_16:         'https://www.figma.com/api/mcp/asset/88dd2c7c-a638-4d54-a6d2-5cf13c10e07e',
-  ChevronDown_16:      'https://www.figma.com/api/mcp/asset/a16fc5b1-003b-488f-bdec-b6c5b9e18ae5',
+
   Check_16:            'https://www.figma.com/api/mcp/asset/64356e9b-c0a4-48eb-8228-9e35e0493792',
 };
 
@@ -52,40 +52,22 @@ function Icon({ type, size = 24 }: { type: IconType; size?: IconSize }) {
     <div style={{ width: size, height: size, borderRadius: 4, backgroundColor: colors['neutral/border'], opacity: 0.3, flexShrink: 0 }} />
   );
 
-  // ArrowLeft — exact positioning from Figma node 1:294 (24px) and 1:325 (16px)
+  // ArrowLeft — inline SVG (permanent, no expiry)
   if (type === 'Arrow left') {
-    const vectors = src as { v1: string; v2: string };
-    const insetH = size === 16 ? '-1px -10.71%' : '-1px -7.14%';
-    const insetD = size === 16 ? '-10.71% -21.43%' : '-7.14% -14.29%';
     return (
-      <div style={{ width: size, height: size, position: 'relative', flexShrink: 0, overflow: 'hidden' }}>
-        {/* Horizontal bar — centered vertically, 20.83% inset on sides */}
-        <div style={{ position: 'absolute', bottom: '50%', left: '20.83%', right: '20.83%', top: '50%' }}>
-          <div style={{ position: 'absolute', top: insetH.split(' ')[0], bottom: insetH.split(' ')[0], left: insetH.split(' ')[1], right: insetH.split(' ')[1] }}>
-            <img src={vectors.v1} alt="" style={{ display: 'block', width: '100%', height: '100%', maxWidth: 'none' }} />
-          </div>
-        </div>
-        {/* Diagonal tip — 20.83% inset, left quarter */}
-        <div style={{ position: 'absolute', bottom: '20.83%', left: '20.83%', right: '50%', top: '20.83%' }}>
-          <div style={{ position: 'absolute', top: insetD.split(' ')[0], bottom: insetD.split(' ')[0], left: insetD.split(' ')[1], right: insetD.split(' ')[1] }}>
-            <img src={vectors.v2} alt="" style={{ display: 'block', width: '100%', height: '100%', maxWidth: 'none' }} />
-          </div>
-        </div>
-      </div>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+        <path d="M19 12H5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 5L5 12L12 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
     );
   }
 
-  // Chevron down — precise absolute positioning from Figma
+  // Chevron down — inline SVG (permanent, no expiry)
   if (type === 'Chevron down') {
-    const isS = size === 16;
-    // size=24: w=12 h=7.41 left=6 top=8.3  |  size=16: w=8 h=4.94 left=4 top=5.53
-    const cw = isS ? 8 : 12, ch = isS ? 4.94 : 7.41, cl = isS ? 4 : 6, ct = isS ? 5.53 : 8.3;
     return (
-      <div style={{ width: size, height: size, position: 'relative', flexShrink: 0 }}>
-        <div style={{ position: 'absolute', left: cl, top: ct, width: cw, height: ch }}>
-          <img src={src as string} alt={type} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }} />
-        </div>
-      </div>
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
+        <path d="M6 9L12 15L18 9" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
     );
   }
 
