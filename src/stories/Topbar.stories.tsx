@@ -1,46 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { colors, spacing, radius, textStyles } from '../theme/tokens';
-
-// Arrow left SVG path from DS El Pedido Icon component
-const ArrowLeft = ({ color = '#fff' }: { color?: string }) => (
-  <svg width={24} height={24} viewBox="0 0 24 24" fill="none">
-    <path d="M19 12H5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    <path d="M12 19L5 12L12 5" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
-
-// ── IconButton sub-component ──────────────────────────────────
-function IconButton({ onClick }: { onClick?: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        width: 40, height: 40,
-        borderRadius: radius.full,
-        backgroundColor: colors['neutral/surface-elevated'],
-        border: 'none',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: spacing[8],
-        flexShrink: 0,
-        transition: 'background 0.15s',
-      }}
-      onMouseEnter={e => (e.currentTarget.style.background = colors['neutral/surface-elevated-hover'])}
-      onMouseLeave={e => (e.currentTarget.style.background = colors['neutral/surface-elevated'])}
-    >
-      <ArrowLeft color={colors['surface/on-dark']} />
-    </button>
-  );
-}
+import { colors, spacing, textStyles } from '../theme/tokens';
+import { IconButton, Icon } from './_ds-components';
 
 // ── Topbar component ──────────────────────────────────────────
 interface TopbarProps {
-  title?: string;
-  showBack?: boolean;
-  onBack?: () => void;
+  title?:     string;
+  showBack?:  boolean;
+  onBack?:    () => void;
   rightSlot?: React.ReactNode;
 }
 
@@ -54,19 +21,23 @@ function Topbar({
 
   return (
     <div style={{
-      width: '100%',
-      height: 56,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      width: '100%', height: 56,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
       padding: `0 ${spacing[16]}px`,
       backgroundColor: colors['system/background'],
       fontFamily: 'Geist, system-ui, sans-serif',
       boxSizing: 'border-box',
     }}>
-      {/* Left */}
+      {/* Left — IconButton (node 1:490) from DS */}
       <div style={{ width: SIDE_WIDTH, display: 'flex', alignItems: 'center' }}>
-        {showBack && <IconButton onClick={onBack} />}
+        {showBack && (
+          <IconButton
+            icon="Arrow left"
+            style="filled"
+            state="default"
+            onClick={onBack}
+          />
+        )}
       </div>
 
       {/* Title */}
@@ -76,9 +47,7 @@ function Topbar({
           fontWeight: textStyles['Heading/H3'].fontWeight,
           lineHeight: `${textStyles['Heading/H3'].lineHeight}px`,
           color: colors['surface/on-dark'],
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {title}
         </span>
@@ -100,25 +69,13 @@ const meta: Meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: `
-Navigation bar with optional back button (IconButton) and centered title.
+        component: `Navigation bar — DS El Pedido.
 
-**Props:**
-- \`title\` — string displayed in the center
-- \`onBack\` — optional callback; renders IconButton (Arrow left) when provided
-- \`rightSlot\` — optional node on the right for symmetry/actions
+**Props:** \`title\` · \`showBack\` · \`onBack\` · \`rightSlot\`
 
-**Design tokens:**
-- bg: \`system/background\`
-- title: \`Heading/H3\` · \`surface/on-dark\`
-- back button: \`neutral/surface-elevated\` bg · \`radius/full\`
-        `.trim(),
+Reutiliza: **IconButton** (Arrow left, filled) · **Icon** (Arrow left)`,
       },
     },
-  },
-  argTypes: {
-    title:    { control: 'text', description: 'Page title' },
-    showBack: { control: 'boolean', description: 'Show back button' },
   },
 };
 export default meta;
@@ -171,7 +128,7 @@ export const AllVariants: StoryObj = {
       <Topbar title="Título longo que vai truncar aqui mesmo" showBack />
       <Topbar title="Com ação direita" showBack
         rightSlot={
-          <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors['brand/accent'], fontSize: 14, fontWeight: 500, fontFamily: 'Geist, system-ui, sans-serif', padding: 0 }}>
+          <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: colors['brand/accent'], fontSize: 14, fontWeight: 500, fontFamily: 'Geist, sans-serif', padding: 0 }}>
             Editar
           </button>
         }

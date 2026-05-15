@@ -230,3 +230,54 @@ export function QuantityStepper({ value = 0, onChange, min = 0, max = 99 }: Quan
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────
+// ICON BUTTON — node 1:490
+// Filled | Ghost × Default | Hover | Pressed | Disabled
+// ─────────────────────────────────────────────────────────────
+
+type IBState = 'default' | 'hover' | 'pressed' | 'disabled';
+type IBStyle = 'filled' | 'ghost';
+
+export interface IconButtonProps {
+  icon?:     IconType;
+  state?:    IBState;
+  style?:    IBStyle;
+  size?:     IconSize;
+  onClick?:  () => void;
+}
+
+export function IconButton({
+  icon    = 'Arrow left',
+  state   = 'default',
+  style   = 'filled',
+  size    = 24,
+  onClick,
+}: IconButtonProps) {
+  const isFilled   = style === 'filled';
+  const isHover    = state === 'hover';
+  const isPressed  = state === 'pressed';
+  const isDisabled = state === 'disabled';
+
+  const bg = !isFilled       ? 'transparent'
+           : isHover         ? '#373737'   // neutral/surface-elevated-hover
+           : isPressed       ? '#1e1e1e'   // neutral/surface-pressed
+           : '#282828';                    // neutral/surface-elevated
+
+  return (
+    <div
+      onClick={!isDisabled ? onClick : undefined}
+      style={{
+        width: 40, height: 40, borderRadius: '50%',
+        backgroundColor: bg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
+        opacity: isDisabled ? 0.35 : 1,
+        flexShrink: 0,
+        transition: 'background 0.15s',
+      }}
+    >
+      <Icon type={icon} size={size} />
+    </div>
+  );
+}
