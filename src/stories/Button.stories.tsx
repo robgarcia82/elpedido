@@ -4,8 +4,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { colors } from '../theme/tokens';
-import { Button, type ButtonProps, Icon, type IconSize } from './_ds-components';
+import { colors, radius } from '../theme/tokens';
 
 // ── Icon placeholder (Search) — matches Figma leading/trailing icon slot ──
 const SearchIcon = ({ size }: { size: number }) => (
