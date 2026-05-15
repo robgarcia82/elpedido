@@ -55,13 +55,11 @@ function OrderCard({
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           overflow: 'hidden', width: '100%', flexShrink: 0,
         }}>
-          {/* left: flex gap-16 justify-center shrink-0 (align-items:stretch = default)
-              Children STRETCH vertically to fill left section height.
-              Figma: node 6:418 */}
+          {/* left: flex gap-16 items-center justify-center overflow-clip shrink-0
+              Figma: node 6:418 — alignItems:center centers avatar vs product-list */}
           <div style={{
-            display: 'flex', gap: 16, justifyContent: 'center',
+            display: 'flex', gap: 16, alignItems: 'center', justifyContent: 'center',
             overflow: 'hidden', flexShrink: 0,
-            /* NO alignItems → defaults to stretch */
           }}>
             {/* CustomerAvatar — node 1:626 */}
             <CustomerAvatar name={customer.name} phone={customer.phone} />
