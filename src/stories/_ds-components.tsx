@@ -281,3 +281,44 @@ export function IconButton({
     </div>
   );
 }
+
+// ─────────────────────────────────────────────────────────────
+// BUTTON CARD — node 1:278
+// Category selection card with icon + label
+// ─────────────────────────────────────────────────────────────
+
+export interface ButtonCardProps {
+  state?:    'Default' | 'Selected';
+  label?:    string;
+  showIcon?: boolean;
+  icon?:     IconType;
+  onClick?:  () => void;
+}
+
+export function ButtonCard({
+  state    = 'Default',
+  label    = 'Value',
+  showIcon = true,
+  icon     = 'Favoritos',
+  onClick,
+}: ButtonCardProps) {
+  const isSelected = state === 'Selected';
+  return (
+    <div onClick={onClick} style={{
+      width: 120, height: 88, borderRadius: 16,
+      backgroundColor: isSelected ? '#2b3bb3' : '#1f1f1f',
+      padding: '8px 12px 12px',
+      display: 'flex', flexDirection: 'column',
+      alignItems: 'flex-start', justifyContent: 'space-between',
+      cursor: 'pointer', boxSizing: 'border-box', flexShrink: 0,
+      transition: 'background 0.15s',
+    }}>
+      {showIcon && <div style={{ width: 24, height: 24 }}><Icon type={icon} size={24} /></div>}
+      <span style={{
+        fontSize: 14, fontWeight: 500, lineHeight: '16px',
+        color: isSelected ? '#fafafa' : '#a8a29e',
+        fontFamily: 'Geist, system-ui, sans-serif', whiteSpace: 'nowrap',
+      }}>{label}</span>
+    </div>
+  );
+}
