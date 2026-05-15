@@ -83,12 +83,14 @@ export interface ButtonProps {
   autoWidth?: boolean;
   showLeadingIcon?:  boolean;
   showTrailingIcon?: boolean;
+  onClick?: () => void;
 }
 
 export function Button({
   tertiary = 'Primary', state = 'Default', size = 'High',
   label = 'Novo pedido', width, autoWidth = false,
   showLeadingIcon = false, showTrailingIcon = false,
+  onClick,
 }: ButtonProps) {
   const { width: _defaultW, ...sizeNoWidth } = BTN_SIZES[size] as typeof BTN_SIZES[typeof size] & { width?: number };
   const sizeStyle = {
@@ -98,7 +100,7 @@ export function Button({
   const iconSize = size === 'High' ? 24 : size === 'Medium' ? 20 : 16;
 
   return (
-    <div style={{
+    <div onClick={onClick} style={{
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       flexShrink: 0,
       borderRadius: radius.full,
@@ -199,3 +201,32 @@ export function CustomerAvatar({ name, phone, photoUri }: { name: string; phone:
 }
 
 export const DS_ICON_TYPES = ICON_TYPES;
+
+// ─────────────────────────────────────────────────────────────
+// QUANTITY STEPPER — node 1:813
+// ─────────────────────────────────────────────────────────────
+
+export interface QuantityStepperProps {
+  value?: number;
+  onChange?: (v: number) => void;
+  min?: number;
+  max?: number;
+}
+
+export function QuantityStepper({ value = 0, onChange, min = 0, max = 99 }: QuantityStepperProps) {
+  return (
+    <div style={{ width: 104, height: 36, display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Geist, system-ui, sans-serif' }}>
+      <button
+        onClick={() => onChange?.(Math.max(min, value - 1))}
+        disabled={value <= min}
+        style={{ width: 32, height: 32, borderRadius: '50%', border: 'none', cursor: value <= min ? 'not-allowed' : 'pointer', backgroundColor: '#282828', color: value <= min ? '#555' : colors['surface/on-dark'], fontSize: 18, fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: value <= min ? 0.4 : 1, flexShrink: 0 }}
+      >−</button>
+      <span style={{ fontSize: 18, fontWeight: 500, letterSpacing: -0.5, color: colors['surface/on-dark'], minWidth: 24, textAlign: 'center' }}>{value}</span>
+      <button
+        onClick={() => onChange?.(Math.min(max, value + 1))}
+        disabled={value >= max}
+        style={{ width: 32, height: 32, borderRadius: '50%', border: 'none', cursor: value >= max ? 'not-allowed' : 'pointer', backgroundColor: colors['brand/primary'], color: colors['surface/on-dark'], fontSize: 18, fontWeight: 500, display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: value >= max ? 0.4 : 1, flexShrink: 0 }}
+      >+</button>
+    </div>
+  );
+}
