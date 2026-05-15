@@ -78,7 +78,7 @@ function TextField({
   const FloatingContent = ({ active = false }: { active?: boolean }) => (
     <div style={{
       display: 'flex', flexDirection: 'column',
-      alignItems: 'flex-start', paddingTop: 4, // spacing/4
+      alignItems: 'flex-start',
       whiteSpace: 'nowrap', overflow: 'hidden',
       flexShrink: 0,
     }}>
@@ -109,8 +109,9 @@ function TextField({
           <div style={{
             display: 'flex', flexDirection: 'column',
             flex: '1 0 0', alignItems: 'flex-start',
-            paddingTop: 4, overflow: 'hidden',
+            overflow: 'hidden',
             height: '100%', whiteSpace: 'nowrap', minWidth: 0,
+            justifyContent: 'center',
           }}>
             <span style={{ fontSize: 10, fontWeight: 500, lineHeight: 'normal', color: TF.textLabelFloat, fontFamily: TF.font }}>
               {label}
