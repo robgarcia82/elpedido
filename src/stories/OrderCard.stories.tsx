@@ -48,7 +48,8 @@ function Button({ tertiary = 'Primary', state = 'Default', size = 'High', label 
   };
   return (
     <div style={{
-      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      flexShrink: 0,
       borderRadius: radius.full,
       backgroundColor: getBg(tertiary, state, size),
       opacity: state === 'Disabled' ? 0.4 : 1,
@@ -174,24 +175,23 @@ function OrderCard({
       boxSizing: 'border-box',
       flexShrink: 0,
     }}>
-      {/* Content row */}
+      {/* Content row — flex items-center justify-between w-full (Figma: node 6:417) */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         overflow: 'hidden',
         width: '100%',
+        flexShrink: 0,
       }}>
-        {/* Left */}
+        {/* Left — flex gap-16 items-start justify-center shrink-0 (Figma: node 6:418) */}
         <div style={{
           display: 'flex',
-          flex: isHomecard ? '1 0 0' : undefined,
-          alignItems: isHomecard ? 'center' : 'flex-start',
-          justifyContent: isDefault ? 'center' : undefined,
+          alignItems: 'flex-start',
+          justifyContent: 'center',
           gap: 16,
           overflow: 'hidden',
-          flexShrink: isDefault ? 0 : undefined,
-          minWidth: isHomecard ? 0 : undefined,
+          flexShrink: 0,
         }}>
           {/* Default: CustomerAvatar */}
           {isDefault && (
@@ -224,7 +224,7 @@ function OrderCard({
           </div>
         </div>
 
-        {/* Right: ActionStack — Default only */}
+        {/* Action stack — flex-col h-112 items-end justify-between shrink-0 (Figma: node 6:426) */}
         {isDefault && (
           <div style={{
             display: 'flex',
@@ -232,7 +232,6 @@ function OrderCard({
             height: 112,
             alignItems: 'flex-end',
             justifyContent: 'space-between',
-            overflow: 'hidden',
             flexShrink: 0,
           }}>
             <Button tertiary="Primary" size="Small" label="Próximo" autoWidth />
