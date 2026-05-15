@@ -71,7 +71,7 @@ function Button({
     <div style={{
       display:         'inline-flex',
       alignItems:      'center',
-      justifyContent:  'space-between', // justify-between — matches Figma
+      justifyContent:  (showLeadingIcon || showTrailingIcon) ? 'space-between' : 'center',
       borderRadius:    radius.full,     // var(--button/radius, 100px)
       backgroundColor: getBg(tertiary, state, size),
       opacity:         state === 'Disabled' ? 0.4 : 1,
