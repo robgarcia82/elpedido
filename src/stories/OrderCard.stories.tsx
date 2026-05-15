@@ -12,6 +12,55 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { colors, spacing, radius } from '../theme/tokens';
 
+// ── Button component — mirrors Button DS (node 1:817) ─────────
+function getBg(tertiary: 'Primary' | 'Secondary', state: 'Default' | 'Pressed' | 'Disabled', size: 'High' | 'Medium' | 'Small'): string {
+  if (tertiary === 'Primary') {
+    if (state === 'Pressed') return '#1e2b8a';
+    return '#2b3bb3';
+  }
+  if (state === 'Pressed')  return '#282828';
+  if (state === 'Disabled' && size !== 'Small') return '#373737';
+  return 'rgba(161,161,161,0.25)';
+}
+
+const BTN_SIZES: Record<'High' | 'Medium' | 'Small', React.CSSProperties> = {
+  High:   { paddingTop: 16, paddingBottom: 16, paddingLeft: 20, paddingRight: 20, fontSize: 18, lineHeight: '24px' },
+  Medium: { paddingTop: 14, paddingBottom: 14, paddingLeft: 16, paddingRight: 16, fontSize: 16, lineHeight: '24px', width: 158, height: 48 },
+  Small:  { paddingTop:  8, paddingBottom:  8, paddingLeft: 12, paddingRight: 12, fontSize: 12, lineHeight: '16px', width: 123 },
+};
+
+interface ButtonProps {
+  tertiary?: 'Primary' | 'Secondary';
+  state?:    'Default' | 'Pressed' | 'Disabled';
+  size?:     'High' | 'Medium' | 'Small';
+  label?:    string;
+  /** Override fixed width from size spec (e.g. 70 for compact OrderCard buttons) */
+  width?:    number;
+}
+
+function Button({ tertiary = 'Primary', state = 'Default', size = 'High', label = 'Novo pedido', width }: ButtonProps) {
+  const sizeStyle = { ...BTN_SIZES[size], ...(width !== undefined ? { width } : {}) };
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      borderRadius: radius.full,
+      backgroundColor: getBg(tertiary, state, size),
+      opacity: state === 'Disabled' ? 0.4 : 1,
+      cursor:  state === 'Disabled' ? 'not-allowed' : 'pointer',
+      fontFamily: 'Geist, system-ui, sans-serif',
+      fontWeight: 500,
+      color: colors['surface/on-dark'],
+      whiteSpace: 'nowrap',
+      boxSizing: 'border-box' as const,
+      ...sizeStyle,
+    }}>
+      <span style={{ fontSize: sizeStyle.fontSize, lineHeight: sizeStyle.lineHeight as string, fontWeight: 500, textAlign: 'center' }}>
+        {label}
+      </span>
+    </div>
+  );
+}
+
 // ── Tokens ─────────────────────────────────────────────────────
 const T = {
   cardBg:       '#1b1b1b',             // ordercard/bg
@@ -81,23 +130,7 @@ function CustomerAvatar({ name, phone }: { name: string; phone: string }) {
   );
 }
 
-// Action button — compact (12px, py-8, px-12)
-function ActionBtn({ label, variant = 'secondary', width }: { label: string; variant?: 'primary' | 'secondary'; width?: number }) {
-  return (
-    <div style={{
-      backgroundColor: variant === 'primary' ? T.btnPrimary : T.btnSecondary,
-      borderRadius: radius.full,
-      paddingTop: 8, paddingBottom: 8, paddingLeft: 12, paddingRight: 12,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      gap: 12, flexShrink: 0, cursor: 'pointer',
-      width: width,
-    }}>
-      <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '16px', color: T.btnText, fontFamily: 'Geist, system-ui, sans-serif', whiteSpace: 'nowrap' }}>
-        {label}
-      </span>
-    </div>
-  );
-}
+// ActionBtn replaced by Button component (node 1:817)
 
 // ── OrderCard ──────────────────────────────────────────────────
 interface OrderCardProps {
@@ -196,9 +229,9 @@ function OrderCard({
             overflow: 'hidden',
             flexShrink: 0,
           }}>
-            <ActionBtn label="Próximo" variant="primary" />
-            <ActionBtn label="Editar"  variant="secondary" width={70} />
-            <ActionBtn label="+ item"  variant="secondary" width={70} />
+            <Button tertiary="Primary" size="Small" label="Próximo" />
+            <Button tertiary="Secondary" size="Small" label="Editar" width={70} />
+            <Button tertiary="Secondary" size="Small" label="+ item" width={70} />
           </div>
         )}
       </div>
