@@ -42,12 +42,13 @@ function OrderCard({
       boxSizing: 'border-box',
       flexShrink: 0,
     }}>
-      {/* content row — align-items:center distributes all groups centered vertically */}
+      {/* content row — minHeight=112 garante espaço para centralizar verticalmente */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         width: '100%',
+        minHeight: 112,
       }}>
 
         {/* left — avatar/date + product list, centered relative to each other */}
