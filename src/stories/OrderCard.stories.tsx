@@ -79,11 +79,11 @@ function OrderCard({
           </div>
         </div>
 
-        {/* action-stack — flex-col h-112 items-end justify-between shrink-0 (Figma: 6:426) */}
+        {/* action-stack — flex-col gap-8 items-end shrink-0 */}
         {isDefault && (
           <div style={{
             display: 'flex', flexDirection: 'column',
-            height: 112, alignItems: 'flex-end', justifyContent: 'space-between',
+            gap: 8, alignItems: 'flex-end',
             flexShrink: 0,
           }}>
             {/* Button (node 1:817) — Primary, Small, hug width */}
