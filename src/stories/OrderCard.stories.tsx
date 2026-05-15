@@ -74,7 +74,7 @@ function OrderCard({
           )}
 
           {/* product-list — 5× OrderItem (node 1:639 → QuantityBadge 1:632) */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start', overflow: 'hidden', flexShrink: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start', justifyContent: 'center', overflow: 'hidden', flexShrink: 0, alignSelf: 'stretch' }}>
             {products.map((p, i) => <OrderItem key={i} qty={p.qty} name={p.name} />)}
           </div>
         </div>
