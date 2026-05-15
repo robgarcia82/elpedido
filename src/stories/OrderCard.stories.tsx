@@ -30,16 +30,22 @@ const BTN_SIZES: Record<'High' | 'Medium' | 'Small', React.CSSProperties> = {
 };
 
 interface ButtonProps {
-  tertiary?: 'Primary' | 'Secondary';
-  state?:    'Default' | 'Pressed' | 'Disabled';
-  size?:     'High' | 'Medium' | 'Small';
-  label?:    string;
-  /** Override fixed width from size spec (e.g. 70 for compact OrderCard buttons) */
-  width?:    number;
+  tertiary?:  'Primary' | 'Secondary';
+  state?:     'Default' | 'Pressed' | 'Disabled';
+  size?:      'High' | 'Medium' | 'Small';
+  label?:     string;
+  /** Override fixed width (e.g. 70 for compact OrderCard buttons) */
+  width?:     number;
+  /** Remove fixed width from size spec — button hugs its content */
+  autoWidth?: boolean;
 }
 
-function Button({ tertiary = 'Primary', state = 'Default', size = 'High', label = 'Novo pedido', width }: ButtonProps) {
-  const sizeStyle = { ...BTN_SIZES[size], ...(width !== undefined ? { width } : {}) };
+function Button({ tertiary = 'Primary', state = 'Default', size = 'High', label = 'Novo pedido', width, autoWidth = false }: ButtonProps) {
+  const { width: _defaultW, ...sizeNoWidth } = BTN_SIZES[size] as React.CSSProperties & { width?: number };
+  const sizeStyle = {
+    ...(autoWidth ? sizeNoWidth : BTN_SIZES[size]),
+    ...(width !== undefined ? { width } : {}),
+  };
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
@@ -229,7 +235,7 @@ function OrderCard({
             overflow: 'hidden',
             flexShrink: 0,
           }}>
-            <Button tertiary="Primary" size="Small" label="Próximo" />
+            <Button tertiary="Primary" size="Small" label="Próximo" autoWidth />
             <Button tertiary="Secondary" size="Small" label="Editar" width={70} />
             <Button tertiary="Secondary" size="Small" label="+ item" width={70} />
           </div>
