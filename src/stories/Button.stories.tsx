@@ -1,16 +1,11 @@
 /**
  * Button — DS El Pedido
  * Figma: aE63DfO5z6PKevs0791B9q, node 1:817
- *
- * Props (mirrors Figma exactly):
- *   tertiary: "Primary" | "Secondary"
- *   state:    "Default" | "Pressed" | "Disabled"
- *   size:     "High" | "Medium" | "Small"
- *   label, showLeadingIcon, showTrailingIcon
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
-import { colors, radius } from '../theme/tokens';
+import { colors } from '../theme/tokens';
+import { Button, type ButtonProps, Icon, type IconSize } from './_ds-components';
 
 // ── Icon placeholder (Search) — matches Figma leading/trailing icon slot ──
 const SearchIcon = ({ size }: { size: number }) => (

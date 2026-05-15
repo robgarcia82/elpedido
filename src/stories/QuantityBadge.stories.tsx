@@ -1,19 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { colors } from '../theme/tokens';
-
-function QuantityBadge({ qty = 1 }: { qty?: number }) {
-  return (
-    <div style={{
-      width: 20, height: 20, borderRadius: 4,
-      backgroundColor: colors['neutral/surface-elevated'],
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      flexShrink: 0,
-    }}>
-      <span style={{ fontSize: 10, fontWeight: 500, color: colors['neutral/text-secondary'], fontFamily: 'Geist, system-ui, sans-serif', lineHeight: 1 }}>{qty}</span>
-    </div>
-  );
-}
+import { QuantityBadge } from './_ds-components';
 
 const meta: Meta = { title: 'Components/QuantityBadge', parameters: { backgrounds: { default: 'dark' } } };
 export default meta;

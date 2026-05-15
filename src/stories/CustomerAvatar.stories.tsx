@@ -1,76 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
 import { colors } from '../theme/tokens';
-
-// ── AvatarPhoto (web) ─────────────────────────────────────────
-// Mirrors src/components/AvatarPhoto.tsx for the Storybook web env
-const TOKENS = {
-  bg:        colors['neutral/surface-elevated'],
-  textColor: colors['neutral/text-tertiary'],
-};
+import { CustomerAvatar } from './_ds-components';
 
 const SAMPLE_PHOTO = 'https://www.figma.com/api/mcp/asset/10556111-4c77-48cf-9722-32870ce3d855';
-
-interface AvatarPhotoProps {
-  type: 'initials' | 'photo';
-  initials?: string;
-  uri?: string;
-  size?: number;
-}
-
-function AvatarPhoto({ type, initials = 'RC', uri, size = 48 }: AvatarPhotoProps) {
-  const fontSize = Math.round(size * 0.25);
-  const base: React.CSSProperties = {
-    width: size, height: size, borderRadius: '50%',
-    overflow: 'hidden', flexShrink: 0,
-  };
-  if (type === 'photo' && uri) {
-    return <img src={uri} alt="Avatar" style={{ ...base, objectFit: 'cover', display: 'block' }} />;
-  }
-  return (
-    <div style={{ ...base, backgroundColor: TOKENS.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <span style={{ fontSize, fontWeight: 500, color: TOKENS.textColor, fontFamily: 'Geist, system-ui, sans-serif', lineHeight: 1, userSelect: 'none' }}>
-        {initials.slice(0, 2).toUpperCase()}
-      </span>
-    </div>
-  );
-}
-
-// ── CustomerAvatar (web) ──────────────────────────────────────
-// Mirrors src/components/CustomerAvatar.tsx — uses AvatarPhoto internally
-interface CustomerAvatarProps {
-  name: string;
-  phone: string;
-  photoUri?: string;
-  size?: number;
-}
-
-function CustomerAvatar({ name, phone, photoUri, size = 48 }: CustomerAvatarProps) {
-  const initials = name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
-
-  return (
-    <div style={{
-      width: 91, display: 'flex', flexDirection: 'column',
-      alignItems: 'center', gap: 12,
-      fontFamily: 'Geist, system-ui, sans-serif',
-    }}>
-      {/* Delegates to AvatarPhoto — same as RN component */}
-      {photoUri
-        ? <AvatarPhoto type="photo" uri={photoUri} size={size} />
-        : <AvatarPhoto type="initials" initials={initials} size={size} />
-      }
-
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-        <span style={{ fontSize: 14, fontWeight: 500, color: colors['surface/on-dark'], textAlign: 'center', lineHeight: '20px' }}>
-          {name}
-        </span>
-        <span style={{ fontSize: 12, color: colors['neutral/text-tertiary'], textAlign: 'center', lineHeight: '16px' }}>
-          {phone}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // ── Meta ──────────────────────────────────────────────────────
 const meta: Meta = {
