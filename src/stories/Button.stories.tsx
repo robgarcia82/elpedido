@@ -37,10 +37,10 @@ function getBg(tertiary: 'Primary' | 'Secondary', state: 'Default' | 'Pressed' |
 }
 
 // size → exact padding, width, font per Figma
-const SIZE_STYLES: Record<'High' | 'Medium' | 'Small', React.CSSProperties> = {
-  High:   { padding: '16px 20px',   fontSize: 18, lineHeight: '24px'                   },
-  Medium: { padding: '14px 16px',   fontSize: 16, lineHeight: '24px', width: 158, height: 48 },
-  Small:  { padding: '8px 12px',    fontSize: 12, lineHeight: '16px', width: 123        },
+const SIZE_STYLES: Record<'High' | 'Medium' | 'Small', React.CSSProperties & { iconInset: number }> = {
+  High:   { paddingTop: 16, paddingBottom: 16, paddingLeft: 20, paddingRight: 20, fontSize: 18, lineHeight: '24px',                    iconInset: 20 },
+  Medium: { paddingTop: 14, paddingBottom: 14, paddingLeft: 16, paddingRight: 16, fontSize: 16, lineHeight: '24px', width: 158, height: 48, iconInset: 16 },
+  Small:  { paddingTop:  8, paddingBottom:  8, paddingLeft: 12, paddingRight: 12, fontSize: 12, lineHeight: '16px', width: 123,           iconInset: 12 },
 };
 
 const ICON_SIZE: Record<'High' | 'Medium' | 'Small', number> = {
@@ -71,24 +71,33 @@ function Button({
     <div style={{
       display:         'inline-flex',
       alignItems:      'center',
-      justifyContent:  (showLeadingIcon || showTrailingIcon) ? 'space-between' : 'center',
-      borderRadius:    radius.full,     // var(--button/radius, 100px)
+      justifyContent:  'center',
+      position:        'relative',
+      borderRadius:    radius.full,
       backgroundColor: getBg(tertiary, state, size),
       opacity:         state === 'Disabled' ? 0.4 : 1,
       cursor:          state === 'Disabled' ? 'not-allowed' : 'pointer',
       fontFamily:      'Geist, system-ui, sans-serif',
       fontWeight:      500,
-      color:           colors['surface/on-dark'], // button/primary-text | secondary-text (both white)
+      color:           colors['surface/on-dark'],
       whiteSpace:      'nowrap',
       boxSizing:       'border-box' as const,
-      gap:             8,
       ...SIZE_STYLES[size],
     }}>
-      {showLeadingIcon  && <SearchIcon size={iconSize} />}
-      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500, flex: 1, textAlign: 'center' }}>
+      {/* Icons are absolutely positioned so they never shift the label */}
+      {showLeadingIcon && (
+        <span style={{ position: 'absolute', left: SIZE_STYLES[size].iconInset, display: 'flex', alignItems: 'center' }}>
+          <SearchIcon size={iconSize} />
+        </span>
+      )}
+      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500, textAlign: 'center' }}>
         {label}
       </span>
-      {showTrailingIcon && <SearchIcon size={iconSize} />}
+      {showTrailingIcon && (
+        <span style={{ position: 'absolute', right: SIZE_STYLES[size].iconInset, display: 'flex', alignItems: 'center' }}>
+          <SearchIcon size={iconSize} />
+        </span>
+      )}
     </div>
   );
 }
