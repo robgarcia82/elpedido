@@ -14,26 +14,8 @@ const preview: Preview = {
         { name: 'white', value: '#FFFFFF' },
       ],
     },
-    // Mobile viewport presets
     viewport: {
-      viewports: {
-        iphone14: {
-          name: 'iPhone 14',
-          styles: { width: '390px', height: '844px' },
-          type: 'mobile',
-        },
-        iphone14pro: {
-          name: 'iPhone 14 Pro',
-          styles: { width: '393px', height: '852px' },
-          type: 'mobile',
-        },
-        pixel7: {
-          name: 'Pixel 7',
-          styles: { width: '412px', height: '915px' },
-          type: 'mobile',
-        },
-      },
-      defaultViewport: 'iphone14',
+      defaultViewport: 'reset',
     },
     controls: {
       matchers: {
