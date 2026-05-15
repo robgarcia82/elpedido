@@ -178,7 +178,7 @@ function OrderCard({
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 16,
+        justifyContent: 'space-between',
         overflow: 'hidden',
         width: '100%',
       }}>
