@@ -309,7 +309,7 @@ export function ButtonCard({
       backgroundColor: isSelected ? '#2b3bb3' : '#1f1f1f',
       padding: '8px 12px 12px',
       display: 'flex', flexDirection: 'column',
-      alignItems: 'flex-start', justifyContent: 'space-between',
+      alignItems: 'flex-start', justifyContent: showIcon ? 'space-between' : 'flex-end',
       cursor: 'pointer', boxSizing: 'border-box', flexShrink: 0,
       transition: 'background 0.15s',
     }}>
