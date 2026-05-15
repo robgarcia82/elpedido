@@ -85,7 +85,7 @@ function Button({
       ...SIZE_STYLES[size],
     }}>
       {showLeadingIcon  && <SearchIcon size={iconSize} />}
-      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500 }}>
+      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500, flex: 1, textAlign: 'center' }}>
         {label}
       </span>
       {showTrailingIcon && <SearchIcon size={iconSize} />}
