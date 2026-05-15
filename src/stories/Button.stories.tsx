@@ -72,7 +72,6 @@ function Button({
       display:         'inline-flex',
       alignItems:      'center',
       justifyContent:  'center',
-      position:        'relative',
       borderRadius:    radius.full,
       backgroundColor: getBg(tertiary, state, size),
       opacity:         state === 'Disabled' ? 0.4 : 1,
@@ -82,22 +81,24 @@ function Button({
       color:           colors['surface/on-dark'],
       whiteSpace:      'nowrap',
       boxSizing:       'border-box' as const,
+      gap:             8,
       ...SIZE_STYLES[size],
     }}>
-      {/* Icons are absolutely positioned so they never shift the label */}
-      {showLeadingIcon && (
-        <span style={{ position: 'absolute', left: SIZE_STYLES[size].iconInset, display: 'flex', alignItems: 'center' }}>
-          <SearchIcon size={iconSize} />
-        </span>
-      )}
-      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500, textAlign: 'center' }}>
+      {/* Leading slot — real icon or invisible spacer to keep label centered */}
+      {showLeadingIcon
+        ? <SearchIcon size={iconSize} />
+        : showTrailingIcon && <span style={{ width: iconSize, height: iconSize, flexShrink: 0 }} />
+      }
+
+      <span style={{ fontSize: SIZE_STYLES[size].fontSize, lineHeight: SIZE_STYLES[size].lineHeight, fontWeight: 500, textAlign: 'center', flex: 1 }}>
         {label}
       </span>
-      {showTrailingIcon && (
-        <span style={{ position: 'absolute', right: SIZE_STYLES[size].iconInset, display: 'flex', alignItems: 'center' }}>
-          <SearchIcon size={iconSize} />
-        </span>
-      )}
+
+      {/* Trailing slot — real icon or invisible spacer to keep label centered */}
+      {showTrailingIcon
+        ? <SearchIcon size={iconSize} />
+        : showLeadingIcon && <span style={{ width: iconSize, height: iconSize, flexShrink: 0 }} />
+      }
     </div>
   );
 }
