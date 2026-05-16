@@ -186,18 +186,17 @@ function HomeScreenPreview() {
         position: 'absolute', top: 40, bottom: 72, left: 0, right: 0,
         overflowY: 'auto',
         display: 'flex', flexDirection: 'column', gap: 24,
-        paddingTop: 8, paddingLeft: 16, paddingRight: 16,
-        boxSizing: 'border-box',
+        paddingTop: 8,
       }}>
-        {/* BalanceCard — px=16 */}
-        <BalanceCard />
-
-        {/* TabBar — full width (override container padding) */}
-        <div style={{ marginLeft: -16, marginRight: -16 }}>
-          <TabBar active={activeTab} onChange={setActiveTab} />
+        {/* BalanceCard — px=16 (Figma node 1:868) */}
+        <div style={{ paddingLeft: 16, paddingRight: 16 }}>
+          <BalanceCard />
         </div>
 
-        {/* Content section — px=16 */}
+        {/* TabBar — full width, no horizontal padding (Figma node 1:870) */}
+        <TabBar active={activeTab} onChange={setActiveTab} />
+
+        {/* Container — px=16, gap=24 (Figma node 1:872) */}
         <div style={{ paddingLeft: 16, paddingRight: 16, display: 'flex', flexDirection: 'column', gap: 24, paddingBottom: 16 }}>
 
           {/* Combobox — full width */}
