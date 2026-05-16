@@ -12,7 +12,7 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
-import { Icon, BalanceCard } from './_ds-components';
+import { Icon, BalanceCard, BottomNavBar, type NavTab } from './_ds-components';
 
 const F = 'Geist, system-ui, sans-serif';
 
@@ -155,51 +155,6 @@ function ChartCard({ title = 'Vendas em Abril' }: { title?: string }) {
   );
 }
 
-// ─────────────────────────────────────────────────────────────
-// BottomNavBar — node 1:854
-// h=72, bg: #1f1f1f, shadow top, 5 items
-// Uses Icon component from DS
-// ─────────────────────────────────────────────────────────────
-const NAV: { label: string; icon: React.ComponentProps<typeof Icon>['type'] }[] = [
-  { label: 'Home',     icon: 'Home' },
-  { label: 'Clientes', icon: 'Clientes' },
-  { label: 'Pedidos',  icon: 'Pedidos' },
-  { label: 'Estoque',  icon: 'Estoque' },
-  { label: 'Insights', icon: 'Insights' },
-];
-
-function BottomNavBar({ active, onChange }: { active: string; onChange: (v: string) => void }) {
-  return (
-    <div style={{
-      position: 'absolute', bottom: 0, left: 0, right: 0, height: 72,
-      backgroundColor: '#1f1f1f',
-      boxShadow: '0px -1px 8px rgba(0,0,0,0.3)',
-      display: 'flex', alignItems: 'stretch',
-      fontFamily: F,
-    }}>
-      {NAV.map(({ label, icon }) => {
-        const isActive = label === active;
-        const color = isActive ? '#4C7DFE' : '#A1A1A1';
-        return (
-          <button key={label} onClick={() => onChange(label)} style={{
-            flex: 1, display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', gap: 4,
-            background: 'none', border: 'none', cursor: 'pointer',
-            paddingTop: 12, paddingBottom: 12,
-          }}>
-            {/* Icon from DS Icon component */}
-            <div style={{ filter: isActive ? 'none' : 'opacity(0.65)', display: 'flex' }}>
-              <Icon type={icon} size={24} />
-            </div>
-            <span style={{ fontSize: 12, fontWeight: 500, lineHeight: '16px', color, textAlign: 'center' }}>
-              {label}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 // ─────────────────────────────────────────────────────────────
 // HomeScreen — node 1:853
@@ -207,7 +162,7 @@ function BottomNavBar({ active, onChange }: { active: string; onChange: (v: stri
 // ─────────────────────────────────────────────────────────────
 function HomeScreenPreview() {
   const [activeTab, setActiveTab] = useState('Vendas');
-  const [activeNav, setActiveNav] = useState('Home');
+  const [activeNav, setActiveNav] = useState<NavTab>('Home');
 
   return (
     <div style={{
@@ -263,7 +218,7 @@ function HomeScreenPreview() {
       </div>
 
       {/* BottomNavBar — fixed at bottom */}
-      <BottomNavBar active={activeNav} onChange={setActiveNav} />
+      <BottomNavBar activeTab={activeNav} onTabChange={setActiveNav} />
     </div>
   );
 }
