@@ -327,7 +327,6 @@ export function ButtonCard({
 // BALANCE CARD — node 1:205
 // Skeleton → bg-in → texts-in phase machine + NumberFlow count-up
 // ─────────────────────────────────────────────────────────────
-import NumberFlow from '@number-flow/react';
 
 const BC_STYLE_ID = 'bc-styles';
 function injectBcStyles() {
