@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...textStyles['Heading/Overline'],
-    color: colors['neutral/text-label'],
+    color: colors['neutral/text-muted'],
   },
   valores: {
     gap: spacing[8],

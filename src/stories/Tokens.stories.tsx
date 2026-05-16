@@ -161,7 +161,7 @@ function TypographyStory() {
                 fontFamily: F,
                 fontSize: s.fontSize,
                 fontWeight: s.fontWeight,
-                lineHeight: s.lineHeight ? `${s.lineHeight}px` : 'normal',
+                lineHeight: s.lineHeight ? `${(s as any).lineHeight}px` : 'normal',
                 letterSpacing: s.letterSpacing ? `${s.letterSpacing}px` : undefined,
                 textTransform: s.textTransform,
               }}>
@@ -189,7 +189,7 @@ function TypographyStory() {
 // ── Component Tokens ──────────────────────────────────────────
 
 function ComponentTokensStory() {
-  const flat: [string, string | number][] = [];
+  const flat: [string, string][] = [];
   function flatten(obj: any, prefix: string) {
     for (const [k, v] of Object.entries(obj)) {
       if (typeof v === 'object' && v !== null && !k.startsWith('__')) {

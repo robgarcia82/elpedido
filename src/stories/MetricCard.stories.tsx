@@ -8,7 +8,7 @@ function MetricCard({ title = 'Ticket médio', currency = 'R$', number = '38,90'
   return (
     <div style={{ width, backgroundColor: colors['neutral/background'], borderRadius: radius.md, padding: spacing[16], fontFamily: 'Geist, system-ui, sans-serif', boxShadow: '0 4px 32px rgba(23,28,34,0.04)' }}>
       <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[16] }}>
-        <span style={{ fontSize: textStyles['Heading/Overline'].fontSize, fontWeight: textStyles['Heading/Overline'].fontWeight, letterSpacing: textStyles['Heading/Overline'].letterSpacing, textTransform: 'uppercase', color: colors['neutral/text-label'] }}>{title}</span>
+        <span style={{ fontSize: textStyles['Heading/Overline'].fontSize, fontWeight: textStyles['Heading/Overline'].fontWeight, letterSpacing: textStyles['Heading/Overline'].letterSpacing, textTransform: 'uppercase', color: colors['neutral/text-muted'] }}>{title}</span>
         <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[8] }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: spacing[4] }}>
             <span style={{ fontSize: textStyles['Heading/Currency'].fontSize, fontWeight: textStyles['Heading/Currency'].fontWeight, letterSpacing: textStyles['Heading/Currency'].letterSpacing, color: colors['surface/on-dark'], lineHeight: `${textStyles['Heading/Currency'].lineHeight}px` }}>{currency}</span>

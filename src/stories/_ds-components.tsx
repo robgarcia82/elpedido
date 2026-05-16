@@ -200,7 +200,6 @@ export function CustomerAvatar({ name, phone, photoUri }: { name: string; phone:
   );
 }
 
-export const DS_ICON_TYPES = ICON_TYPES;
 
 // ─────────────────────────────────────────────────────────────
 // QUANTITY STEPPER — node 1:813
@@ -323,22 +322,16 @@ export function ButtonCard({
   );
 }
 
+
 // ─────────────────────────────────────────────────────────────
-// BALANCE CARD — node 1:205
-// Skeleton → bg-in → texts-in phase machine + NumberFlow count-up
+// BALANCE CARD — node 146:366 (DS El Pedido)
+// bg: #1f1f1f, radius/md=16, 215px tall, full-width
+// 3 decorative image layers + content (title + value + comparison)
 // ─────────────────────────────────────────────────────────────
 
-const BC_STYLE_ID = 'bc-styles';
-function injectBcStyles() {
-  if (typeof document === 'undefined' || document.getElementById(BC_STYLE_ID)) return;
-  const s = document.createElement('style');
-  s.id = BC_STYLE_ID;
-  s.textContent = `
-    @keyframes bcShimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
-    @keyframes bcFade    { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-  `;
-  document.head.appendChild(s);
-}
+const BC_GROUP1      = 'https://www.figma.com/api/mcp/asset/390e09ab-1b0b-4701-a462-6f7bce5a89c5';
+const BC_DECORATION1 = 'https://www.figma.com/api/mcp/asset/742b1a49-b1eb-49ef-8cb4-71125c0f0558';
+const BC_TEXTURE     = 'https://www.figma.com/api/mcp/asset/a70be637-a228-4631-8959-adeb2977fcb5';
 
 export interface BalanceCardProps {
   title?:  string;
@@ -353,87 +346,42 @@ export function BalanceCard({
   sign   = '+',
   amount = 'R$ 392',
 }: BalanceCardProps) {
-  const [phase, setPhase] = React.useState<'skeleton' | 'bg-in' | 'texts-in'>('skeleton');
-  const [flowValue, setFlowValue] = React.useState(0);
-  const loadedRef = React.useRef(false);
-  const startRef  = React.useRef(Date.now());
-
-  const match   = value.match(/^([^0-9]*)([0-9][0-9.,]*)$/);
-  const prefix  = match?.[1] ?? '';
-  const numeric = match ? parseFloat(match[2].replace(/\./g, '').replace(',', '.')) : 0;
-
-  React.useEffect(() => {
-    injectBcStyles();
-    setPhase('skeleton');
-    setFlowValue(0);
-    loadedRef.current = false;
-    startRef.current  = Date.now();
-  }, [value]);
-
-  const handleLoad = () => {
-    if (loadedRef.current) return;
-    loadedRef.current = true;
-    const wait = Math.max(0, 800 - (Date.now() - startRef.current));
-    setTimeout(() => setPhase('bg-in'), wait);
-  };
-
-  React.useEffect(() => {
-    if (phase !== 'bg-in') return;
-    const t = setTimeout(() => setPhase('texts-in'), 500);
-    return () => clearTimeout(t);
-  }, [phase]);
-
-  React.useEffect(() => {
-    if (phase !== 'texts-in') return;
-    const t = setTimeout(() => setFlowValue(numeric), 100);
-    return () => clearTimeout(t);
-  }, [phase, numeric]);
-
-  const showBg    = phase === 'bg-in'    || phase === 'texts-in';
-  const showTexts = phase === 'texts-in';
-
   return (
     <div style={{
       width: '100%', height: 215,
-      backgroundColor: colors['neutral/background'],
+      backgroundColor: '#1f1f1f',
       borderRadius: 16, overflow: 'hidden', position: 'relative',
       fontFamily: 'Geist, system-ui, sans-serif', flexShrink: 0,
     }}>
-      {/* Skeleton shimmer */}
-      <div style={{
-        position: 'absolute', inset: 0, zIndex: 10,
-        backgroundColor: colors['neutral/surface-elevated'],
-        pointerEvents: 'none', transition: 'opacity 0.4s ease',
-        opacity: showBg ? 0 : 1,
-      }}>
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%)',
-          backgroundSize: '600px 100%', animation: 'bcShimmer 1.4s infinite linear',
-        }} />
+      <div style={{ position: 'absolute', height: 307, left: 123, top: 59, width: 335 }}>
+        <div style={{ position: 'absolute', top: '-37.46%', right: '-25.97%', bottom: '-43.65%', left: '-40%' }}>
+          <img alt="" style={{ display: 'block', maxWidth: 'none', width: '100%', height: '100%' }} src={BC_GROUP1} />
+        </div>
       </div>
-      {/* BG image */}
-      <img src="./BalanceCardBG.png" onLoad={handleLoad} onError={handleLoad} alt=""
-        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', transition: 'opacity 0.5s ease', opacity: showBg ? 1 : 0 }}
-      />
-      {/* Content */}
-      <div style={{ position: 'absolute', left: 16, top: 16, width: 203, height: 175, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', zIndex: 5 }}>
-        <span style={{ fontSize: 16, fontWeight: 500, color: colors['neutral/text-muted'], opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFade 0.5s ease-out both' : 'none' }}>
+      <div style={{ position: 'absolute', left: -250, top: 16, width: 469, height: 469 }}>
+        <div style={{ position: 'absolute', top: '-28.57%', right: '-28.57%', bottom: '-28.57%', left: '-28.57%' }}>
+          <img alt="" style={{ display: 'block', maxWidth: 'none', width: '100%', height: '100%' }} src={BC_DECORATION1} />
+        </div>
+      </div>
+      <div style={{ position: 'absolute', height: 475, left: 0, top: 0, width: 437 }}>
+        <img alt="" style={{ position: 'absolute', inset: 0, maxWidth: 'none', mixBlendMode: 'difference', objectFit: 'cover', opacity: 0.35, pointerEvents: 'none', width: '100%', height: '100%' }} src={BC_TEXTURE} />
+      </div>
+      <div style={{ position: 'absolute', left: 16, top: 16, display: 'flex', flexDirection: 'column', gap: 64, alignItems: 'flex-start', overflow: 'hidden' }}>
+        <p style={{ fontSize: 16, fontWeight: 500, lineHeight: '28px', color: '#808080', margin: 0, flexShrink: 0 }}>
           {title}
-        </span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <NumberFlow value={flowValue} prefix={prefix} locales="pt-BR" respectMotionPreference={false}
-            transformTiming={{ duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-            spinTiming={{ duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
-            opacityTiming={{ duration: 600, easing: 'ease-out' }}
-            style={{ fontSize: 48, fontWeight: 400, letterSpacing: -0.5, color: colors['surface/on-dark'], lineHeight: 0.85, fontVariantNumeric: 'tabular-nums', opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFade 0.5s ease-out 0.15s both' : 'none', '--number-flow-mask-height': '0.2em' } as React.CSSProperties}
-          />
-          <div style={{ display: 'flex', gap: 4, opacity: showTexts ? 1 : 0, animation: showTexts ? 'bcFade 0.5s ease-out 0.3s both' : 'none' }}>
-            <span style={{ fontSize: 16, fontWeight: 500, color: colors['feedback/positive'] }}>{sign}</span>
-            <span style={{ fontSize: 16, fontWeight: 500, color: colors['feedback/positive'] }}>{amount}</span>
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', overflow: 'hidden', flexShrink: 0, letterSpacing: -0.5, whiteSpace: 'nowrap' }}>
+          <p style={{ fontSize: 48, fontWeight: 400, color: '#ffffff', margin: 0, flexShrink: 0, lineHeight: 1 }}>
+            {value}
+          </p>
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
+            <p style={{ fontSize: 16, fontWeight: 500, color: '#6cb527', margin: 0 }}>{sign}</p>
+            <p style={{ fontSize: 16, fontWeight: 500, color: '#6cb527', margin: 0 }}>{amount}</p>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+export const DS_ICON_TYPES = ICON_TYPES;
