@@ -12,51 +12,11 @@
  */
 import type { Meta, StoryObj } from '@storybook/react';
 import React, { useState } from 'react';
-import { Icon } from './_ds-components';
+import { Icon, BalanceCard } from './_ds-components';
 
 const F = 'Geist, system-ui, sans-serif';
 
-// ─────────────────────────────────────────────────────────────
-// BalanceCard — node 1:869
-// bg: #1f1f1f, radius/md, h=215, full-width
-// ─────────────────────────────────────────────────────────────
-function BalanceCard() {
-  return (
-    <div style={{
-      width: '100%', height: 215, backgroundColor: '#1f1f1f',
-      borderRadius: 16, overflow: 'hidden', position: 'relative',
-      fontFamily: F, flexShrink: 0,
-    }}>
-      {/* Gradient decoration */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'radial-gradient(ellipse at 80% 120%, rgba(43,59,179,0.4) 0%, transparent 60%)',
-        pointerEvents: 'none',
-      }} />
-      {/* Subtle concentric lines texture */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        background: 'repeating-radial-gradient(circle at 60% 50%, transparent 0px, transparent 20px, rgba(255,255,255,0.015) 21px)',
-        pointerEvents: 'none',
-      }} />
-      {/* Content */}
-      <div style={{ position: 'absolute', left: 16, top: 16, width: 203, display: 'flex', flexDirection: 'column', gap: 64 }}>
-        <span style={{ fontSize: 16, fontWeight: 500, color: '#808080', lineHeight: '28px' }}>
-          Balanço do mês
-        </span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-          <span style={{ fontSize: 48, fontWeight: 400, color: '#ffffff', letterSpacing: -0.5, lineHeight: 1 }}>
-            R$ 8.982
-          </span>
-          <div style={{ display: 'flex', gap: 4, alignItems: 'center', marginTop: 4, fontSize: 16, fontWeight: 500, color: '#6cb527', letterSpacing: -0.5 }}>
-            <span>+</span>
-            <span>R$ 392</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+// BalanceCard — imported from _ds-components (node 1:205)
 
 // ─────────────────────────────────────────────────────────────
 // TabBar — node 1:871
