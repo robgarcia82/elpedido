@@ -329,10 +329,6 @@ export function ButtonCard({
 // 3 decorative image layers + content (title + value + comparison)
 // ─────────────────────────────────────────────────────────────
 
-const BC_GROUP1      = 'https://www.figma.com/api/mcp/asset/390e09ab-1b0b-4701-a462-6f7bce5a89c5';
-const BC_DECORATION1 = 'https://www.figma.com/api/mcp/asset/742b1a49-b1eb-49ef-8cb4-71125c0f0558';
-const BC_TEXTURE     = 'https://www.figma.com/api/mcp/asset/a70be637-a228-4631-8959-adeb2977fcb5';
-
 export interface BalanceCardProps {
   title?:  string;
   value?:  string;
@@ -353,19 +349,13 @@ export function BalanceCard({
       borderRadius: 16, overflow: 'hidden', position: 'relative',
       fontFamily: 'Geist, system-ui, sans-serif', flexShrink: 0,
     }}>
-      <div style={{ position: 'absolute', height: 307, left: 123, top: 59, width: 335 }}>
-        <div style={{ position: 'absolute', top: '-37.46%', right: '-25.97%', bottom: '-43.65%', left: '-40%' }}>
-          <img alt="" style={{ display: 'block', maxWidth: 'none', width: '100%', height: '100%' }} src={BC_GROUP1} />
-        </div>
-      </div>
-      <div style={{ position: 'absolute', left: -250, top: 16, width: 469, height: 469 }}>
-        <div style={{ position: 'absolute', top: '-28.57%', right: '-28.57%', bottom: '-28.57%', left: '-28.57%' }}>
-          <img alt="" style={{ display: 'block', maxWidth: 'none', width: '100%', height: '100%' }} src={BC_DECORATION1} />
-        </div>
-      </div>
-      <div style={{ position: 'absolute', height: 475, left: 0, top: 0, width: 437 }}>
-        <img alt="" style={{ position: 'absolute', inset: 0, maxWidth: 'none', mixBlendMode: 'difference', objectFit: 'cover', opacity: 0.35, pointerEvents: 'none', width: '100%', height: '100%' }} src={BC_TEXTURE} />
-      </div>
+      {/* Background image — local asset (no expiry) */}
+      <img
+        src="./BalanceCardBG.png"
+        alt=""
+        style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', pointerEvents: 'none' }}
+      />
+      {/* Content — left:16 top:16, flex-col gap:64 */}
       <div style={{ position: 'absolute', left: 16, top: 16, display: 'flex', flexDirection: 'column', gap: 64, alignItems: 'flex-start', overflow: 'hidden' }}>
         <p style={{ fontSize: 16, fontWeight: 500, lineHeight: '28px', color: '#808080', margin: 0, flexShrink: 0 }}>
           {title}
