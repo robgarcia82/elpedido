@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import NumberFlow from '@number-flow/react';
 import { colors, spacing, radius } from '../theme/tokens';
 
 // ─────────────────────────────────────────────────────────────
@@ -342,6 +343,20 @@ export function BalanceCard({
   sign   = '+',
   amount = 'R$ 392',
 }: BalanceCardProps) {
+  // Parse numeric values for NumberFlow animation
+  const parseNum = (v: string) => parseFloat(v.replace(/[^0-9,]/g, '').replace(',', '.')) || 0;
+  const valueNum  = parseNum(value);
+  const amountNum = parseNum(amount);
+  const valuePrefix  = value.match(/^[^0-9]*/)?.[0] ?? '';
+  const amountPrefix = amount.match(/^[^0-9]*/)?.[0] ?? '';
+
+  // Animate from 0 on mount
+  const [animated, setAnimated] = React.useState(false);
+  React.useEffect(() => {
+    const t = setTimeout(() => setAnimated(true), 300);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div style={{
       width: '100%', height: 215,
@@ -361,12 +376,38 @@ export function BalanceCard({
           {title}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', overflow: 'hidden', flexShrink: 0, letterSpacing: -0.5, whiteSpace: 'nowrap' }}>
-          <p style={{ fontSize: 48, fontWeight: 400, color: '#ffffff', margin: 0, flexShrink: 0, lineHeight: 1 }}>
-            {value}
-          </p>
+          {/* Animated value — Heading/Hero 48px */}
+          <NumberFlow
+            value={animated ? valueNum : 0}
+            prefix={valuePrefix}
+            locales="pt-BR"
+            respectMotionPreference={false}
+            transformTiming={{ duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+            spinTiming={{ duration: 2000, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+            opacityTiming={{ duration: 600, easing: 'ease-out' }}
+            style={{
+              fontSize: 48, fontWeight: 400, color: '#ffffff',
+              lineHeight: 1, letterSpacing: -0.5,
+              fontVariantNumeric: 'tabular-nums',
+              '--number-flow-mask-height': '0.2em',
+            } as React.CSSProperties}
+          />
+          {/* Animated comparison — Body/Comparison 16px */}
           <div style={{ display: 'flex', gap: 4, alignItems: 'center', overflow: 'hidden', flexShrink: 0 }}>
             <p style={{ fontSize: 16, fontWeight: 500, color: '#6cb527', margin: 0 }}>{sign}</p>
-            <p style={{ fontSize: 16, fontWeight: 500, color: '#6cb527', margin: 0 }}>{amount}</p>
+            <NumberFlow
+              value={animated ? amountNum : 0}
+              prefix={amountPrefix}
+              locales="pt-BR"
+              respectMotionPreference={false}
+              transformTiming={{ duration: 1800, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+              spinTiming={{ duration: 1800, easing: 'cubic-bezier(0.16, 1, 0.3, 1)' }}
+              opacityTiming={{ duration: 500, easing: 'ease-out' }}
+              style={{
+                fontSize: 16, fontWeight: 500, color: '#6cb527',
+                letterSpacing: -0.5, fontVariantNumeric: 'tabular-nums',
+              } as React.CSSProperties}
+            />
           </div>
         </div>
       </div>
