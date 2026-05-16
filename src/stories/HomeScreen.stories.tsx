@@ -205,10 +205,26 @@ function HomeScreenPreview() {
           {/* Main container */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8, alignItems: 'flex-start', width: '100%' }}>
 
-            {/* MetricCards row */}
-            <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', width: '100%' }}>
-              <MetricCard title="Ticket médio" currency="R$" number="38,90" percentage="20%" description="Mês a mês" />
-              <MetricCard title="Lucro no mês"  currency="R$" number="5.304" percentage="20%" description="Text" />
+            {/* MetricCards — carrossel com scroll lateral */}
+            <div style={{
+              display: 'flex', gap: 8, alignItems: 'flex-start',
+              overflowX: 'auto', width: '100%',
+              marginLeft: -16, marginRight: -16,
+              paddingLeft: 16, paddingRight: 16,
+              boxSizing: 'border-box',
+              scrollSnapType: 'x mandatory',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+            } as React.CSSProperties}>
+              {[
+                { title: 'Ticket médio', currency: 'R$', number: '38,90', percentage: '20%', description: 'Mês a mês' },
+                { title: 'Lucro no mês',  currency: 'R$', number: '5.304',  percentage: '20%', description: 'Text' },
+                { title: 'Total vendas', currency: 'R$', number: '8.982',  percentage: '12%', description: 'vs mês ant.' },
+              ].map(card => (
+                <div key={card.title} style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>
+                  <MetricCard {...card} />
+                </div>
+              ))}
             </div>
 
             {/* ChartCard — full width */}
