@@ -217,8 +217,10 @@ function HomeScreenPreview() {
         </div>
       </div>
 
-      {/* BottomNavBar — fixed at bottom */}
-      <BottomNavBar activeTab={activeNav} onTabChange={setActiveNav} />
+      {/* BottomNavBar — absolute bottom */}
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+        <BottomNavBar activeTab={activeNav} onTabChange={setActiveNav} />
+      </div>
     </div>
   );
 }
